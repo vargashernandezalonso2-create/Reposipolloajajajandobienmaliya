@@ -14,7 +14,7 @@ app.use(express.static('public'));
 
 // vavavava configuracion de la conexion a postgresql -bynd
 const pool = new Pool({
-    connectionString: process.env.DATABASE_URL || 'postgresql://root:n0m3l0@localhost:5432/panaderia_esperanza',
+    connectionString: process.env.DATABASE_URL || 'postgresql://panaderiaesperanza_user:AZDgJoIDcSSfLLC3oU616NX0jcwMd3Nl@dpg-d450cmshg0os73fph0b0-a/panaderiaesperanza',
     ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
