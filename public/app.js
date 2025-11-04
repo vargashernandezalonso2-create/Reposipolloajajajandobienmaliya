@@ -1,8 +1,12 @@
+const isProduction = window.location.hostname !== 'localhost';
+const API_BASE = isProduction 
+  ? 'https://reposipolloajajajandobienmaliya.onrender.com' 
+  : 'http://localhost:3001';
 
+// aaa ahora usamos API_BASE en todos los fetch -bynd
 let currentSlide = 0;
 let totalSlides = 0;
 let seasonalProducts = [];
-
 
 function getCurrentSeason() {
     const today = new Date();
@@ -11,7 +15,6 @@ function getCurrentSeason() {
     
     console.log('📅 [DEBUG] Fecha actual:', month, '/', day);
     
-
     if ((month === 11 && day >= 6) || month === 12 || (month === 1 && day <= 9)) {
         console.log('🎄 [DEBUG] Temporada: Navidad');
         return 'navidad';
@@ -21,13 +24,12 @@ function getCurrentSeason() {
     }
 }
 
-
 async function loadSeasonalProducts() {
     try {
         const season = getCurrentSeason();
         console.log('📄 [DEBUG] Cargando productos de temporada:', season);
         
-        const response = await fetch(`http://localhost:3001/api/productos/temporada/${season}`);
+        const response = await fetch(`${API_BASE}/api/productos/temporada/${season}`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -35,21 +37,16 @@ async function loadSeasonalProducts() {
         
         seasonalProducts = await response.json();
         totalSlides = seasonalProducts.length;
-        
         console.log('✅ [DEBUG] Productos de temporada cargados:', seasonalProducts);
-        
      
         const title = season === 'navidad' ? '🎄 Felices Fiestas 🎅' : '🎃 Feliz Halloween 🎃';
         document.getElementById('heroTitle').textContent = title;
-        
-       
         renderCarousel();
         
     } catch (error) {
         console.error('❌ [ERROR] Error cargando productos de temporada:', error);
     }
 }
-
 
 function renderCarousel() {
     const carouselInner = document.getElementById('carouselInner');
@@ -60,11 +57,9 @@ function renderCarousel() {
         return;
     }
     
-   
     carouselInner.innerHTML = '';
     indicators.innerHTML = '';
     
-  
     seasonalProducts.forEach((product, index) => {
         const slide = document.createElement('div');
         slide.className = 'carousel-item carousel-clickable';
@@ -82,8 +77,6 @@ function renderCarousel() {
     });
     
     console.log('✅ [DEBUG] Carousel renderizado con', seasonalProducts.length, 'slides');
-    
-
     setupCarouselClicks();
 }
 
@@ -104,7 +97,6 @@ function goToSlide(index) {
     updateCarousel();
 }
 
-
 function updateCarousel() {
     const inner = document.getElementById('carouselInner');
     inner.style.transform = `translateX(-${currentSlide * 100}%)`;
@@ -119,7 +111,6 @@ function updateCarousel() {
     });
 }
 
-
 let autoplayInterval;
 
 function startAutoplay() {
@@ -129,21 +120,18 @@ function startAutoplay() {
     }, 5000);
 }
 
-
 function resetAutoplay() {
     startAutoplay();
 }
-
 
 let allProducts = [];
 
 console.log('[DEBUG] Esperando productos del backend...');
 
-
 async function loadProducts() {
     try {
         console.log('[DEBUG] Haciendo fetch a /api/productos...');
-        const response = await fetch('http://localhost:3001/api/productos');
+        const response = await fetch(`${API_BASE}/api/productos`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -151,13 +139,10 @@ async function loadProducts() {
         
         allProducts = await response.json();
         console.log('[DEBUG] Productos cargados del backend:', allProducts.length);
-        
-        
         renderRandomProducts();
         
     } catch (error) {
         console.error('[ERROR] Error cargando productos:', error);
-  
         const container = document.getElementById('randomProducts');
         if (container) {
             container.innerHTML = `
@@ -170,11 +155,10 @@ async function loadProducts() {
     }
 }
 
-
 async function getRandomProducts(count) {
     try {
         console.log('[DEBUG] Obteniendo productos aleatorios del backend...');
-        const response = await fetch(`http://localhost:3001/api/productos/random/${count}`);
+        const response = await fetch(`${API_BASE}/api/productos/random/${count}`);
         
         if (!response.ok) {
             throw new Error(`HTTP error! status: ${response.status}`);
@@ -187,7 +171,6 @@ async function getRandomProducts(count) {
         
     } catch (error) {
         console.error('[ERROR] Error obteniendo productos aleatorios:', error);
-        // chintrolas si falla usamos los productos cargados localmente -bynd
         if (allProducts.length > 0) {
             const nonSpecial = allProducts.filter(p => !p.es_especial);
             const shuffled = [...nonSpecial].sort(() => Math.random() - 0.5);
@@ -196,7 +179,6 @@ async function getRandomProducts(count) {
         return [];
     }
 }
-
 
 async function renderRandomProducts() {
     console.log('[DEBUG] Renderizando productos aleatorios...');
@@ -207,7 +189,6 @@ async function renderRandomProducts() {
         return;
     }
     
-
     container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #d4a574;">Cargando productos...</div>';
     
     const randomProducts = await getRandomProducts(6);
@@ -236,12 +217,10 @@ async function renderRandomProducts() {
     console.log('[DEBUG] Productos renderizados exitosamente');
 }
 
-
 function goToProduct(productId) {
     console.log('📄 [DEBUG] Navegando a producto:', productId);
     window.location.href = `producto.html?id=${productId}`;
 }
-
 
 let gearRotation = 0;
 let isDragging = false;
@@ -250,7 +229,6 @@ let rotationStart = 0;
 let totalRotation = 0;
 
 console.log('[DEBUG] Variables del engranaje inicializadas');
-
 
 function getAngle(e, element) {
     const rect = element.getBoundingClientRect();
@@ -263,7 +241,6 @@ function getAngle(e, element) {
     const angle = Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
     return angle;
 }
-
 
 function startDrag(e) {
     console.log('[DEBUG] Inicio de arrastre');
@@ -294,7 +271,6 @@ function drag(e) {
     const currentAngle = getAngle(e, gear);
     let delta = currentAngle - startAngle;
     
-
     if (delta > 180) delta -= 360;
     if (delta < -180) delta += 360;
     
@@ -312,7 +288,6 @@ function endDrag(e) {
     e.preventDefault();
     isDragging = false;
     
-
     if (Math.abs(totalRotation) >= 160) {
         console.log('🎉 [DEBUG] ¡Media vuelta completa! Cambiando productos...');
         renderRandomProducts();
@@ -328,14 +303,10 @@ function endDrag(e) {
     }
 }
 
-
 function setupCarouselClicks() {
     console.log('[DEBUG] Configurando clicks del carousel...');
-    
-    
     setTimeout(() => {
         const carouselItems = document.querySelectorAll('.carousel-clickable');
-        
         console.log('[DEBUG] Items del carousel encontrados:', carouselItems.length);
         
         carouselItems.forEach((item, index) => {
@@ -343,9 +314,8 @@ function setupCarouselClicks() {
                 const productImage = this.getAttribute('data-product-image');
                 console.log(' [DEBUG] Click en carousel item', index, ', buscando por imagen:', productImage);
                 
-             
                 try {
-                    const response = await fetch(`http://localhost:3001/api/productos/buscar-imagen/${encodeURIComponent(productImage)}`);
+                    const response = await fetch(`${API_BASE}/api/productos/buscar-imagen/${encodeURIComponent(productImage)}`);
                     
                     if (!response.ok) {
                         throw new Error('Producto no encontrado');
@@ -353,8 +323,6 @@ function setupCarouselClicks() {
                     
                     const product = await response.json();
                     console.log(' [DEBUG] Producto encontrado:', product);
-                    
-                
                     window.location.href = `producto.html?id=${product.id}`;
                     
                 } catch (error) {
@@ -363,11 +331,9 @@ function setupCarouselClicks() {
                 }
             });
         });
-        
         console.log(' [DEBUG] Carousel configurado para clicks');
     }, 500); 
 }
-
 
 console.log(' [DEBUG] Esperando carga del DOM...');
 
@@ -385,22 +351,17 @@ document.addEventListener('DOMContentLoaded', () => {
     
     console.log('[DEBUG] Engranaje encontrado:', gear);
     
-    
     gear.addEventListener('mousedown', startDrag);
     document.addEventListener('mousemove', drag);
     document.addEventListener('mouseup', endDrag);
     console.log(' [DEBUG] Eventos de mouse agregados');
-    
     
     gear.addEventListener('touchstart', startDrag, { passive: false });
     document.addEventListener('touchmove', drag, { passive: false });
     document.addEventListener('touchend', endDrag, { passive: false });
     console.log(' [DEBUG] Eventos de touch agregados');
     
- 
     setupCarouselClicks();
-    
-    
     loadSeasonalProducts(); 
     loadProducts();
     startAutoplay(); 
