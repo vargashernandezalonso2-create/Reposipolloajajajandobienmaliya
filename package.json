@@ -7,13 +7,17 @@
     "start": "node server.js",
     "dev": "nodemon server.js"
   },
-  "keywords": ["panaderia", "express", "mysql"],
+  "keywords": [
+    "panaderia",
+    "express",
+    "postgresql"
+  ],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "cors": "^2.8.5",
     "express": "^4.18.2",
-    "mysql2": "^3.6.5",
-    "cors": "^2.8.5"
+    "pg": "^8.16.3"
   },
   "devDependencies": {
     "nodemon": "^3.0.2"
