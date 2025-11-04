@@ -508,253 +508,261 @@
         </div>
     </div>
 
-    <script>
-        // aaa obtenemos el id del producto de la url -bynd
-        const urlParams = new URLSearchParams(window.location.search);
-        const productId = urlParams.get('id');
-        let currentProduct = null;
-        let quantity = 1;
+   <script>
+ 
+    const isProduction = window.location.hostname !== 'localhost';
+    const API_BASE = isProduction 
+        ? 'https://reposipolloajajajandobienmaliya.onrender.com' 
+        : 'http://localhost:3001';
 
-        // vavavava carrito en localStorage -bynd
-        function getCart() {
-            const cart = localStorage.getItem('cart');
-            return cart ? JSON.parse(cart) : [];
+    // aaa obtenemos el id del producto de la url -bynd
+    const urlParams = new URLSearchParams(window.location.search);
+    const productId = urlParams.get('id');
+    let currentProduct = null;
+    let quantity = 1;
+
+    // vavavava carrito en localStorage -bynd
+    function getCart() {
+        const cart = localStorage.getItem('cart');
+        return cart ? JSON.parse(cart) : [];
+    }
+
+    function saveCart(cart) {
+        localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
+    }
+
+    // ey actualizar contador del carrito -bynd
+    function updateCartCount() {
+        const cart = getCart();
+        const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
+        document.getElementById('cartCount').textContent = totalItems;
+    }
+
+    // q chidoteee funcion para agregar al carrito -bynd
+    function addToCart() {
+        if (!currentProduct) return;
+
+        const cart = getCart();
+        const precio = parseFloat(currentProduct.price.replace('$', ''));
+        const existingIndex = cart.findIndex(item => item.id === currentProduct.id);
+        
+        if (existingIndex !== -1) {
+            cart[existingIndex].cantidad += quantity;
+        } else {
+            cart.push({
+                id: currentProduct.id,
+                nombre: currentProduct.name,
+                precio: precio,
+                cantidad: quantity,
+                imagen: currentProduct.image
+            });
         }
+        
+        saveCart(cart);
+        alert(`¡${currentProduct.name} agregado al carrito! (${quantity} unidad${quantity > 1 ? 'es' : ''})`);
+    }
 
-        function saveCart(cart) {
-            localStorage.setItem('cart', JSON.stringify(cart));
-            updateCartCount();
-        }
+    // chintrolas funciones para la cantidad -bynd
+    function increaseQuantity() {
+        quantity++;
+        document.getElementById('quantityDisplay').textContent = quantity;
+    }
 
-        // ey actualizar contador del carrito -bynd
-        function updateCartCount() {
-            const cart = getCart();
-            const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
-            document.getElementById('cartCount').textContent = totalItems;
-        }
-
-        // q chidoteee funcion para agregar al carrito -bynd
-        function addToCart() {
-            if (!currentProduct) return;
-
-            const cart = getCart();
-            const precio = parseFloat(currentProduct.price.replace('$', ''));
-            const existingIndex = cart.findIndex(item => item.id === currentProduct.id);
-            
-            if (existingIndex !== -1) {
-                cart[existingIndex].cantidad += quantity;
-            } else {
-                cart.push({
-                    id: currentProduct.id,
-                    nombre: currentProduct.name,
-                    precio: precio,
-                    cantidad: quantity,
-                    imagen: currentProduct.image
-                });
-            }
-            
-            saveCart(cart);
-            alert(`¡${currentProduct.name} agregado al carrito! (${quantity} unidad${quantity > 1 ? 'es' : ''})`);
-        }
-
-        // chintrolas funciones para la cantidad -bynd
-        function increaseQuantity() {
-            quantity++;
+    function decreaseQuantity() {
+        if (quantity > 1) {
+            quantity--;
             document.getElementById('quantityDisplay').textContent = quantity;
         }
+    }
 
-        function decreaseQuantity() {
-            if (quantity > 1) {
-                quantity--;
-                document.getElementById('quantityDisplay').textContent = quantity;
-            }
+    // vavavava funcion para toggle del modal -bynd
+    function toggleCart() {
+        const modal = document.getElementById('cartModal');
+        modal.classList.toggle('active');
+        if (modal.classList.contains('active')) {
+            loadCartModal();
         }
+    }
 
-        // vavavava funcion para toggle del modal -bynd
-        function toggleCart() {
-            const modal = document.getElementById('cartModal');
-            modal.classList.toggle('active');
-            if (modal.classList.contains('active')) {
-                loadCartModal();
-            }
-        }
-
-        // q chidoteee funcion para cargar el carrito en el modal -bynd
-        function loadCartModal() {
-            const cart = getCart();
-            const modalBody = document.getElementById('cartModalBody');
-            const modalFooter = document.getElementById('cartModalFooter');
-            
-            if (cart.length === 0) {
-                modalBody.innerHTML = '<div class="cart-empty">Tu carrito está vacío</div>';
-                modalFooter.style.display = 'none';
-            } else {
-                modalBody.innerHTML = cart.map(item => `
-                    <div class="cart-item">
-                        <div class="cart-item-image">
-                            <img src="${item.imagen}" alt="${item.nombre}">
-                        </div>
-                        <div class="cart-item-info">
-                            <div class="cart-item-name">${item.nombre}</div>
-                            <div class="cart-item-price">$${item.precio} c/u</div>
-                        </div>
-                        <div class="cart-item-actions">
-                            <div class="cart-item-quantity">
-                                <button onclick="updateItemQuantity(${item.id}, ${item.cantidad - 1})">-</button>
-                                <span>${item.cantidad}</span>
-                                <button onclick="updateItemQuantity(${item.id}, ${item.cantidad + 1})">+</button>
-                            </div>
-                            <button class="remove-item" onclick="removeFromCart(${item.id})">🗑️</button>
-                        </div>
+    // q chidoteee funcion para cargar el carrito en el modal -bynd
+    function loadCartModal() {
+        const cart = getCart();
+        const modalBody = document.getElementById('cartModalBody');
+        const modalFooter = document.getElementById('cartModalFooter');
+        
+        if (cart.length === 0) {
+            modalBody.innerHTML = '<div class="cart-empty">Tu carrito está vacío</div>';
+            modalFooter.style.display = 'none';
+        } else {
+            modalBody.innerHTML = cart.map(item => `
+                <div class="cart-item">
+                    <div class="cart-item-image">
+                        <img src="${item.imagen}" alt="${item.nombre}">
                     </div>
-                `).join('');
-                
-                const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-                document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
-                modalFooter.style.display = 'block';
-            }
-        }
-
-        // ey funcion para actualizar cantidad -bynd
-        function updateItemQuantity(id, newQuantity) {
-            if (newQuantity < 1) {
-                removeFromCart(id);
-                return;
-            }
+                    <div class="cart-item-info">
+                        <div class="cart-item-name">${item.nombre}</div>
+                        <div class="cart-item-price">$${item.precio} c/u</div>
+                    </div>
+                    <div class="cart-item-actions">
+                        <div class="cart-item-quantity">
+                            <button onclick="updateItemQuantity(${item.id}, ${item.cantidad - 1})">-</button>
+                            <span>${item.cantidad}</span>
+                            <button onclick="updateItemQuantity(${item.id}, ${item.cantidad + 1})">+</button>
+                        </div>
+                        <button class="remove-item" onclick="removeFromCart(${item.id})">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
             
-            const cart = getCart();
-            const itemIndex = cart.findIndex(item => item.id === id);
-            
-            if (itemIndex !== -1) {
-                cart[itemIndex].cantidad = newQuantity;
-                saveCart(cart);
-                loadCartModal();
-            }
+            const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+            modalFooter.style.display = 'block';
         }
+    }
 
-        // chintrolas funcion para eliminar item -bynd
-        function removeFromCart(id) {
-            let cart = getCart();
-            cart = cart.filter(item => item.id !== id);
+    // ey funcion para actualizar cantidad -bynd
+    function updateItemQuantity(id, newQuantity) {
+        if (newQuantity < 1) {
+            removeFromCart(id);
+            return;
+        }
+        
+        const cart = getCart();
+        const itemIndex = cart.findIndex(item => item.id === id);
+        
+        if (itemIndex !== -1) {
+            cart[itemIndex].cantidad = newQuantity;
             saveCart(cart);
             loadCartModal();
         }
+    }
 
-        // aaa funcion para confirmar compra y restar del stock -bynd
-        async function confirmarCompra() {
-            const cart = getCart();
-            
-            if (cart.length === 0) {
-                alert('Tu carrito está vacío');
-                return;
-            }
-            
-            const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-            const resumen = cart.map(item => `${item.nombre} x${item.cantidad}`).join('\n');
-            
-            const confirmar = confirm(`¿Confirmar compra?\n\n${resumen}\n\nTotal: $${total.toFixed(2)}`);
-            
-            if (!confirmar) return;
-            
-            try {
-                for (const item of cart) {
-                    const response = await fetch(`http://localhost:3001/api/productos/${item.id}/stock`, {
-                        method: 'PUT',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ cantidad: -item.cantidad })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error(`Error al actualizar stock de ${item.nombre}`);
-                    }
-                }
-                
-                localStorage.removeItem('cart');
-                updateCartCount();
-                loadCartModal();
-                alert('¡Compra realizada con éxito! 🎉\n\nGracias por tu compra en La Desesperanza');
-                
-            } catch (error) {
-                alert('Error al procesar la compra. Por favor intenta de nuevo.');
-            }
+    // chintrolas funcion para eliminar item -bynd
+    function removeFromCart(id) {
+        let cart = getCart();
+        cart = cart.filter(item => item.id !== id);
+        saveCart(cart);
+        loadCartModal();
+    }
+
+    // aaa funcion para confirmar compra y restar del stock -bynd
+    async function confirmarCompra() {
+        const cart = getCart();
+        
+        if (cart.length === 0) {
+            alert('Tu carrito está vacío');
+            return;
         }
-
-        // fokeis funcion para vaciar carrito -bynd
-        function clearCart() {
-            if (!confirm('¿Estás seguro de vaciar el carrito?')) return;
+        
+        const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+        const resumen = cart.map(item => `${item.nombre} x${item.cantidad}`).join('\n');
+        
+        const confirmar = confirm(`¿Confirmar compra?\n\n${resumen}\n\nTotal: $${total.toFixed(2)}`);
+        
+        if (!confirmar) return;
+        
+        try {
+            for (const item of cart) {
+                const response = await fetch(`${API_BASE}/api/productos/${item.id}/stock`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ cantidad: -item.cantidad })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`Error al actualizar stock de ${item.nombre}`);
+                }
+            }
+            
             localStorage.removeItem('cart');
             updateCartCount();
             loadCartModal();
+            alert('¡Compra realizada con éxito! 🎉\n\nGracias por tu compra en La Desesperanza');
+            
+        } catch (error) {
+            console.error('❌ Error en compra:', error);
+            alert('Error al procesar la compra. Por favor intenta de nuevo.');
+        }
+    }
+
+    // fokeis funcion para vaciar carrito -bynd
+    function clearCart() {
+        if (!confirm('¿Estás seguro de vaciar el carrito?')) return;
+        localStorage.removeItem('cart');
+        updateCartCount();
+        loadCartModal();
+    }
+
+    // aaa funcion para cargar el producto -bynd
+    async function loadProduct() {
+        if (!productId) {
+            document.getElementById('productContent').innerHTML = `
+                <div class="product-detail-container">
+                    <div style="grid-column: 1/-1; text-align: center;">
+                        <h2 style="color: #d4a574;">Producto no encontrado</h2>
+                        <a href="index.html" class="back-button">Volver al inicio</a>
+                    </div>
+                </div>
+            `;
+            return;
         }
 
-        // aaa funcion para cargar el producto -bynd
-        async function loadProduct() {
-            if (!productId) {
-                document.getElementById('productContent').innerHTML = `
-                    <div class="product-detail-container">
-                        <div style="grid-column: 1/-1; text-align: center;">
-                            <h2 style="color: #d4a574;">Producto no encontrado</h2>
-                            <a href="index.html" class="back-button">Volver al inicio</a>
-                        </div>
-                    </div>
-                `;
-                return;
+        try {
+            const response = await fetch(`${API_BASE}/api/productos/${productId}`);
+
+            if (!response.ok) {
+                throw new Error('Producto no encontrado');
             }
 
-            try {
-                const response = await fetch(`http://localhost:3001/api/productos/${productId}`);
+            const product = await response.json();
+            currentProduct = product;
 
-                if (!response.ok) {
-                    throw new Error('Producto no encontrado');
-                }
-
-                const product = await response.json();
-                currentProduct = product;
-
-                document.getElementById('productContent').innerHTML = `
-                    <div class="product-detail-container">
-                        <div class="product-detail-image">
-                            <img src="${product.image}" alt="${product.name}" 
-                                 onerror="this.parentElement.innerHTML='<span style=color:#d4a574;font-size:1.2rem;>Imagen no disponible</span>'">
-                        </div>
-                        <div class="product-detail-info">
-                            <h1 class="product-detail-title">${product.name}</h1>
-                            <p class="product-detail-description">${product.desc}</p>
-                            <p class="product-detail-price">${product.price}</p>
-                            <p class="product-detail-stock">Stock disponible: ${product.stock} unidades</p>
-                            
-                            <div class="quantity-selector">
-                                <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
-                                <span class="quantity-display" id="quantityDisplay">1</span>
-                                <button class="quantity-btn" onclick="increaseQuantity()">+</button>
-                            </div>
-                            
-                            <button class="add-to-cart-btn" onclick="addToCart()">🛒 Agregar al carrito</button>
-                            <a href="index.html" class="back-button">← Volver al catálogo</a>
-                            
-                            <p class="note">*Su presentación final podra cambiar con respecto a las imágenes mostradas</p>
-                        </div>
+            document.getElementById('productContent').innerHTML = `
+                <div class="product-detail-container">
+                    <div class="product-detail-image">
+                        <img src="${product.image}" alt="${product.name}" 
+                             onerror="this.parentElement.innerHTML='<span style=color:#d4a574;font-size:1.2rem;>Imagen no disponible</span>'">
                     </div>
-                `;
-
-            } catch (error) {
-                document.getElementById('productContent').innerHTML = `
-                    <div class="product-detail-container">
-                        <div style="grid-column: 1/-1; text-align: center;">
-                            <h2 style="color: #d4a574;">Error cargando el producto</h2>
-                            <p style="color: #f4e4c1; margin: 1rem 0;">No se pudo cargar la información del producto.</p>
-                            <a href="index.html" class="back-button">Volver al inicio</a>
+                    <div class="product-detail-info">
+                        <h1 class="product-detail-title">${product.name}</h1>
+                        <p class="product-detail-description">${product.desc}</p>
+                        <p class="product-detail-price">${product.price}</p>
+                        <p class="product-detail-stock">Stock disponible: ${product.stock} unidades</p>
+                        
+                        <div class="quantity-selector">
+                            <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                            <span class="quantity-display" id="quantityDisplay">1</span>
+                            <button class="quantity-btn" onclick="increaseQuantity()">+</button>
                         </div>
+                        
+                        <button class="add-to-cart-btn" onclick="addToCart()">🛒 Agregar al carrito</button>
+                        <a href="index.html" class="back-button">← Volver al catálogo</a>
+                        
+                        <p class="note">*Su presentación final podra cambiar con respecto a las imágenes mostradas</p>
                     </div>
-                `;
-            }
+                </div>
+            `;
+
+        } catch (error) {
+            console.error('❌ Error cargando producto:', error);
+            document.getElementById('productContent').innerHTML = `
+                <div class="product-detail-container">
+                    <div style="grid-column: 1/-1; text-align: center;">
+                        <h2 style="color: #d4a574;">Error cargando el producto</h2>
+                        <p style="color: #f4e4c1; margin: 1rem 0;">No se pudo cargar la información del producto.</p>
+                        <a href="index.html" class="back-button">Volver al inicio</a>
+                    </div>
+                </div>
+            `;
         }
+    }
 
-        // q chidoteee cargamos el producto cuando este listo el dom -bynd
-        document.addEventListener('DOMContentLoaded', () => {
-            loadProduct();
-            updateCartCount();
-        });
-    </script>
+    // q chidoteee cargamos el producto cuando este listo el dom -bynd
+    document.addEventListener('DOMContentLoaded', () => {
+        loadProduct();
+        updateCartCount();
+    });
+</script>
 </body>
 </html>
