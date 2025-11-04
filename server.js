@@ -1,36 +1,35 @@
-// aaa el server con express y mysql -bynd
+// aaa el server con express y postgresql -bynd
 const express = require('express');
-const mysql = require('mysql2');
+const { Pool } = require('pg');
 const path = require('path');
 const cors = require('cors');
 
 const app = express();
-const PORT = 3001;
+const PORT = process.env.PORT || 3001;
 
 // ey middlewares -bynd
 app.use(cors());
 app.use(express.json());
 app.use(express.static('public'));
 
-// vavavava configuracion de la conexion a mysql -bynd
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: 'n0m3l0', // chintrolas cambia esto por tu password -bynd
-    database: 'panaderia_esperanza'
+// vavavava configuracion de la conexion a postgresql -bynd
+const pool = new Pool({
+    connectionString: process.env.DATABASE_URL || 'postgresql://root:n0m3l0@localhost:5432/panaderia_esperanza',
+    ssl: process.env.NODE_ENV === 'production' ? { rejectUnauthorized: false } : false
 });
 
 // chintrolas conectamos a la bd -bynd
-db.connect((err) => {
+pool.connect((err, client, release) => {
     if (err) {
-        console.error('❌ Error conectando a MySQL:', err);
+        console.error('❌ Error conectando a PostgreSQL:', err);
         return;
     }
-    console.log('✅ Conectado a MySQL');
+    console.log('✅ Conectado a PostgreSQL');
+    release();
 });
 
 // q chidoteee ruta para obtener productos de temporada -bynd
-app.get('/api/productos/temporada/:season', (req, res) => {
+app.get('/api/productos/temporada/:season', async (req, res) => {
     const season = req.params.season;
     console.log('🎄 [SERVER] Obteniendo productos de temporada:', season);
     
@@ -55,17 +54,14 @@ app.get('/api/productos/temporada/:season', (req, res) => {
         FROM productos p
         LEFT JOIN iconos_productos i ON p.id_producto = i.id_producto
         LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
-        WHERE p.nombre IN (?) AND p.activo = TRUE
-        ORDER BY FIELD(p.nombre, ?)
+        WHERE p.nombre = ANY($1) AND p.activo = TRUE
+        ORDER BY array_position($1, p.nombre)
     `;
     
-    db.query(query, [productNames, productNames], (err, results) => {
-        if (err) {
-            console.error('❌ Error obteniendo productos de temporada:', err);
-            return res.status(500).json({ error: 'Error obteniendo productos de temporada' });
-        }
+    try {
+        const result = await pool.query(query, [productNames]);
         
-        const productos = results.map(row => ({
+        const productos = result.rows.map(row => ({
             id: row.id_producto,
             icon: row.icono || '🍞',
             name: row.nombre,
@@ -78,11 +74,14 @@ app.get('/api/productos/temporada/:season', (req, res) => {
         
         console.log('✅ Productos de temporada obtenidos:', productos.length);
         res.json(productos);
-    });
+    } catch (err) {
+        console.error('❌ Error obteniendo productos de temporada:', err);
+        res.status(500).json({ error: 'Error obteniendo productos de temporada' });
+    }
 });
 
 // q chidoteee ruta para obtener todos los productos -bynd
-app.get('/api/productos', (req, res) => {
+app.get('/api/productos', async (req, res) => {
     const query = `
         SELECT 
             p.id_producto,
@@ -100,14 +99,11 @@ app.get('/api/productos', (req, res) => {
         ORDER BY p.id_producto
     `;
     
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('❌ Error obteniendo productos:', err);
-            return res.status(500).json({ error: 'Error obteniendo productos' });
-        }
+    try {
+        const result = await pool.query(query);
         
         // ey formateamos los datos para el frontend -bynd
-        const productos = results.map(row => ({
+        const productos = result.rows.map(row => ({
             id: row.id_producto,
             icon: row.icono || '🍞',
             name: row.nombre,
@@ -120,11 +116,14 @@ app.get('/api/productos', (req, res) => {
         
         console.log('✅ Productos obtenidos:', productos.length);
         res.json(productos);
-    });
+    } catch (err) {
+        console.error('❌ Error obteniendo productos:', err);
+        res.status(500).json({ error: 'Error obteniendo productos' });
+    }
 });
 
 // vavavava ruta para obtener productos aleatorios (excluyendo especiales) -bynd
-app.get('/api/productos/random/:count', (req, res) => {
+app.get('/api/productos/random/:count', async (req, res) => {
     const count = parseInt(req.params.count) || 6;
     
     const query = `
@@ -141,17 +140,14 @@ app.get('/api/productos/random/:count', (req, res) => {
         LEFT JOIN iconos_productos i ON p.id_producto = i.id_producto
         LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
         WHERE p.activo = TRUE AND p.stock > 0 AND (p.es_especial = FALSE OR p.es_especial IS NULL)
-        ORDER BY RAND()
-        LIMIT ?
+        ORDER BY RANDOM()
+        LIMIT $1
     `;
     
-    db.query(query, [count], (err, results) => {
-        if (err) {
-            console.error('❌ Error obteniendo productos aleatorios:', err);
-            return res.status(500).json({ error: 'Error obteniendo productos' });
-        }
+    try {
+        const result = await pool.query(query, [count]);
         
-        const productos = results.map(row => ({
+        const productos = result.rows.map(row => ({
             id: row.id_producto,
             icon: row.icono || '🍞',
             name: row.nombre,
@@ -164,11 +160,14 @@ app.get('/api/productos/random/:count', (req, res) => {
         
         console.log('✅ Productos aleatorios obtenidos (sin especiales):', productos.length);
         res.json(productos);
-    });
+    } catch (err) {
+        console.error('❌ Error obteniendo productos aleatorios:', err);
+        res.status(500).json({ error: 'Error obteniendo productos' });
+    }
 });
 
 // ey ruta para buscar producto por url de imagen -bynd
-app.get('/api/productos/buscar-imagen/:imagen_url', (req, res) => {
+app.get('/api/productos/buscar-imagen/:imagen_url', async (req, res) => {
     const imagen_url = decodeURIComponent(req.params.imagen_url);
     console.log('🔍 [SERVER] Buscando producto por imagen:', imagen_url);
     
@@ -185,21 +184,18 @@ app.get('/api/productos/buscar-imagen/:imagen_url', (req, res) => {
         FROM productos p
         LEFT JOIN iconos_productos i ON p.id_producto = i.id_producto
         LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
-        WHERE p.imagen_url = ? AND p.activo = TRUE
+        WHERE p.imagen_url = $1 AND p.activo = TRUE
     `;
     
-    db.query(query, [imagen_url], (err, results) => {
-        if (err) {
-            console.error('❌ [SERVER] Error buscando producto:', err);
-            return res.status(500).json({ error: 'Error buscando producto' });
-        }
+    try {
+        const result = await pool.query(query, [imagen_url]);
         
-        if (results.length === 0) {
+        if (result.rows.length === 0) {
             console.warn('⚠️ [SERVER] Producto no encontrado con imagen:', imagen_url);
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
         
-        const row = results[0];
+        const row = result.rows[0];
         const producto = {
             id: row.id_producto,
             icon: row.icono || '🍞',
@@ -213,11 +209,14 @@ app.get('/api/productos/buscar-imagen/:imagen_url', (req, res) => {
         
         console.log('✅ [SERVER] Producto encontrado:', producto.name);
         res.json(producto);
-    });
+    } catch (err) {
+        console.error('❌ [SERVER] Error buscando producto:', err);
+        res.status(500).json({ error: 'Error buscando producto' });
+    }
 });
 
 // ey ruta para buscar producto por nombre -bynd
-app.get('/api/productos/buscar/:nombre', (req, res) => {
+app.get('/api/productos/buscar/:nombre', async (req, res) => {
     const nombre = req.params.nombre;
     console.log('🔍 [SERVER] Buscando producto por nombre:', nombre);
     
@@ -234,21 +233,18 @@ app.get('/api/productos/buscar/:nombre', (req, res) => {
         FROM productos p
         LEFT JOIN iconos_productos i ON p.id_producto = i.id_producto
         LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
-        WHERE p.nombre = ? AND p.activo = TRUE
+        WHERE p.nombre = $1 AND p.activo = TRUE
     `;
     
-    db.query(query, [nombre], (err, results) => {
-        if (err) {
-            console.error('❌ [SERVER] Error buscando producto:', err);
-            return res.status(500).json({ error: 'Error buscando producto' });
-        }
+    try {
+        const result = await pool.query(query, [nombre]);
         
-        if (results.length === 0) {
+        if (result.rows.length === 0) {
             console.warn('⚠️ [SERVER] Producto no encontrado:', nombre);
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
         
-        const row = results[0];
+        const row = result.rows[0];
         const producto = {
             id: row.id_producto,
             icon: row.icono || '🍞',
@@ -262,11 +258,14 @@ app.get('/api/productos/buscar/:nombre', (req, res) => {
         
         console.log('✅ [SERVER] Producto encontrado:', producto.name);
         res.json(producto);
-    });
+    } catch (err) {
+        console.error('❌ [SERVER] Error buscando producto:', err);
+        res.status(500).json({ error: 'Error buscando producto' });
+    }
 });
 
 // fokeis ruta para obtener un producto por id -bynd
-app.get('/api/productos/:id', (req, res) => {
+app.get('/api/productos/:id', async (req, res) => {
     const id = req.params.id;
     console.log('🔍 [SERVER] Petición GET /api/productos/:id');
     console.log('🔍 [SERVER] ID recibido:', id);
@@ -285,26 +284,22 @@ app.get('/api/productos/:id', (req, res) => {
         FROM productos p
         LEFT JOIN iconos_productos i ON p.id_producto = i.id_producto
         LEFT JOIN categorias c ON p.id_categoria = c.id_categoria
-        WHERE p.id_producto = ? AND p.activo = TRUE
+        WHERE p.id_producto = $1 AND p.activo = TRUE
     `;
     
     console.log('🔍 [SERVER] Ejecutando query para producto:', id);
     
-    db.query(query, [id], (err, results) => {
-        if (err) {
-            console.error('❌ [SERVER] Error obteniendo producto:', err);
-            console.error('❌ [SERVER] Error details:', err.message);
-            return res.status(500).json({ error: 'Error obteniendo producto' });
-        }
+    try {
+        const result = await pool.query(query, [id]);
         
-        console.log('📊 [SERVER] Resultados de la query:', results.length, 'producto(s)');
+        console.log('📊 [SERVER] Resultados de la query:', result.rows.length, 'producto(s)');
         
-        if (results.length === 0) {
+        if (result.rows.length === 0) {
             console.warn('⚠️ [SERVER] Producto no encontrado con ID:', id);
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
         
-        const row = results[0];
+        const row = result.rows[0];
         const producto = {
             id: row.id_producto,
             icon: row.icono || '🍞',
@@ -319,11 +314,15 @@ app.get('/api/productos/:id', (req, res) => {
         console.log('✅ [SERVER] Producto encontrado:', producto.name);
         console.log('📦 [SERVER] Datos del producto:', JSON.stringify(producto, null, 2));
         res.json(producto);
-    });
+    } catch (err) {
+        console.error('❌ [SERVER] Error obteniendo producto:', err);
+        console.error('❌ [SERVER] Error details:', err.message);
+        res.status(500).json({ error: 'Error obteniendo producto' });
+    }
 });
 
 // chintrolas ruta para actualizar stock -bynd
-app.put('/api/productos/:id/stock', (req, res) => {
+app.put('/api/productos/:id/stock', async (req, res) => {
     const id = req.params.id;
     const { cantidad } = req.body;
     
@@ -331,52 +330,47 @@ app.put('/api/productos/:id/stock', (req, res) => {
         return res.status(400).json({ error: 'Cantidad inválida' });
     }
     
-    const query = 'UPDATE productos SET stock = stock + ? WHERE id_producto = ?';
+    const query = 'UPDATE productos SET stock = stock + $1 WHERE id_producto = $2';
     
-    db.query(query, [cantidad, id], (err, result) => {
-        if (err) {
-            console.error('❌ Error actualizando stock:', err);
-            return res.status(500).json({ error: 'Error actualizando stock' });
-        }
+    try {
+        const result = await pool.query(query, [cantidad, id]);
         
-        if (result.affectedRows === 0) {
+        if (result.rowCount === 0) {
             return res.status(404).json({ error: 'Producto no encontrado' });
         }
         
         console.log('✅ Stock actualizado para producto:', id);
         res.json({ message: 'Stock actualizado correctamente', cantidad });
-    });
+    } catch (err) {
+        console.error('❌ Error actualizando stock:', err);
+        res.status(500).json({ error: 'Error actualizando stock' });
+    }
 });
 
 // vavavava ruta para obtener categorias -bynd
-app.get('/api/categorias', (req, res) => {
+app.get('/api/categorias', async (req, res) => {
     const query = 'SELECT * FROM categorias';
     
-    db.query(query, (err, results) => {
-        if (err) {
-            console.error('❌ Error obteniendo categorías:', err);
-            return res.status(500).json({ error: 'Error obteniendo categorías' });
-        }
-        
-        console.log('✅ Categorías obtenidas:', results.length);
-        res.json(results);
-    });
+    try {
+        const result = await pool.query(query);
+        console.log('✅ Categorías obtenidas:', result.rows.length);
+        res.json(result.rows);
+    } catch (err) {
+        console.error('❌ Error obteniendo categorías:', err);
+        res.status(500).json({ error: 'Error obteniendo categorías' });
+    }
 });
 
 // ey manejamos el cierre de conexion -bynd
-process.on('SIGINT', () => {
-    console.log('\n⚠️ Cerrando conexión a MySQL...');
-    db.end((err) => {
-        if (err) {
-            console.error('❌ Error cerrando conexión:', err);
-        } else {
-            console.log('✅ Conexión cerrada');
-        }
-        process.exit(0);
-    });
+process.on('SIGINT', async () => {
+    console.log('\n⚠️ Cerrando conexión a PostgreSQL...');
+    await pool.end();
+    console.log('✅ Conexión cerrada');
+    process.exit(0);
 });
 
 // q chidoteee iniciamos el server -bynd
 app.listen(PORT, () => {
     console.log(`🎊 Server corriendo en http://localhost:${PORT}`);
+    console.log(`📊 Ambiente: ${process.env.NODE_ENV || 'development'}`);
 });
