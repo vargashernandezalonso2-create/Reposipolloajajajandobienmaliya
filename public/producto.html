@@ -1,0 +1,760 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Producto - La Desesperanza</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        /* aaa estilos para la pagina de producto -bynd */
+        .product-detail-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 2rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            background: linear-gradient(135deg, rgba(61, 40, 23, 0.8), rgba(44, 24, 16, 0.8));
+            border: 3px solid #8b6f47;
+            border-radius: 10px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+        }
+
+        .product-detail-image {
+            width: 100%;
+            aspect-ratio: 1;
+            background: linear-gradient(135deg, rgba(44, 24, 16, 0.8), rgba(61, 40, 23, 0.8));
+            border: 2px solid #8b6f47;
+            border-radius: 8px;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .product-detail-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-detail-info {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            gap: 1.5rem;
+        }
+
+        .product-detail-title {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: #d4a574;
+            margin: 0;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .product-detail-description {
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #f4e4c1;
+        }
+
+        .product-detail-price {
+            font-family: 'Cinzel', serif;
+            font-size: 2rem;
+            color: #d4a574;
+            font-weight: bold;
+        }
+
+        .product-detail-stock {
+            font-size: 1.1rem;
+            color: #c9a66b;
+        }
+
+        .back-button {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: rgba(212, 165, 116, 0.3);
+            border: 2px solid #d4a574;
+            color: #f4e4c1;
+            text-decoration: none;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .back-button:hover {
+            background: rgba(212, 165, 116, 0.6);
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            font-size: 1.5rem;
+            color: #d4a574;
+        }
+
+        /* vavavava estilos del carrito flotante -bynd */
+        .cart-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.9), rgba(139, 111, 71, 0.9));
+            border: 2px solid #d4a574;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1000;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(212, 165, 116, 0.6);
+        }
+
+        .cart-icon span {
+            font-size: 2rem;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #d4a574;
+            color: #2c1810;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 2px solid #2c1810;
+        }
+
+        /* chintrolas boton agregar al carrito -bynd */
+        .add-to-cart-btn {
+            display: inline-block;
+            padding: 1rem 2rem;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.5), rgba(139, 111, 71, 0.5));
+            border: 2px solid #d4a574;
+            color: #f4e4c1;
+            text-decoration: none;
+            border-radius: 5px;
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .add-to-cart-btn:hover {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.8), rgba(139, 111, 71, 0.8));
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4);
+        }
+
+        .quantity-selector {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .quantity-btn {
+            width: 40px;
+            height: 40px;
+            background: rgba(212, 165, 116, 0.3);
+            border: 2px solid #d4a574;
+            color: #f4e4c1;
+            font-size: 1.5rem;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .quantity-btn:hover {
+            background: rgba(212, 165, 116, 0.6);
+        }
+
+        .quantity-display {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: #d4a574;
+            min-width: 40px;
+            text-align: center;
+        }
+
+        /* ey modal del carrito -bynd */
+        .cart-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cart-modal.active {
+            display: flex;
+        }
+
+        .cart-modal-content {
+            background: linear-gradient(135deg, rgba(61, 40, 23, 0.98), rgba(44, 24, 16, 0.98));
+            border: 3px solid #d4a574;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+        }
+
+        .cart-modal-header {
+            padding: 2rem;
+            border-bottom: 2px solid #8b6f47;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .cart-modal-header h2 {
+            font-family: 'Cinzel', serif;
+            color: #d4a574;
+            margin: 0;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            color: #d4a574;
+            font-size: 2rem;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .close-modal:hover {
+            transform: rotate(90deg);
+        }
+
+        .cart-modal-body {
+            padding: 2rem;
+        }
+
+        .cart-empty {
+            text-align: center;
+            padding: 3rem 1rem;
+            color: #c9a66b;
+            font-size: 1.2rem;
+        }
+
+        .cart-item {
+            display: grid;
+            grid-template-columns: 80px 1fr auto;
+            gap: 1rem;
+            padding: 1rem;
+            border-bottom: 1px solid #8b6f47;
+            align-items: center;
+        }
+
+        .cart-item-image {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #8b6f47;
+        }
+
+        .cart-item-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .cart-item-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .cart-item-name {
+            font-family: 'Cinzel', serif;
+            color: #d4a574;
+            font-size: 1.1rem;
+        }
+
+        .cart-item-price {
+            color: #c9a66b;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            align-items: flex-end;
+        }
+
+        .cart-item-quantity {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .cart-item-quantity button {
+            width: 30px;
+            height: 30px;
+            background: rgba(212, 165, 116, 0.3);
+            border: 1px solid #d4a574;
+            color: #f4e4c1;
+            cursor: pointer;
+            border-radius: 3px;
+            font-size: 1rem;
+        }
+
+        .cart-item-quantity button:hover {
+            background: rgba(212, 165, 116, 0.6);
+        }
+
+        .cart-item-quantity span {
+            color: #d4a574;
+            min-width: 30px;
+            text-align: center;
+        }
+
+        .remove-item {
+            background: none;
+            border: none;
+            color: #d4a574;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: color 0.3s ease;
+        }
+
+        .remove-item:hover {
+            color: #ff6b6b;
+        }
+
+        .cart-modal-footer {
+            padding: 2rem;
+            border-top: 2px solid #8b6f47;
+        }
+
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            color: #d4a574;
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .clear-cart-btn {
+            padding: 1rem;
+            background: rgba(139, 111, 71, 0.3);
+            border: 2px solid #8b6f47;
+            color: #c9a66b;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .clear-cart-btn:hover {
+            background: rgba(139, 111, 71, 0.5);
+        }
+
+        .checkout-btn {
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.5), rgba(139, 111, 71, 0.5));
+            border: 2px solid #d4a574;
+            color: #f4e4c1;
+            font-family: 'Cinzel', serif;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: all 0.3s ease;
+            flex: 1;
+        }
+
+        .checkout-btn:hover {
+            background: linear-gradient(135deg, rgba(212, 165, 116, 0.8), rgba(139, 111, 71, 0.8));
+        }
+
+        /* vavavava imagen gang flotante -bynd */
+        .gang-floating {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 999;
+            pointer-events: none;
+        }
+
+        .gang-floating img {
+            max-width: 200px;
+            height: auto;
+            animation: floatAndBreathe 4s ease-in-out infinite;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
+        }
+
+        /* q chidoteee animacion de flotar respirar e inclinar -bynd */
+        @keyframes floatAndBreathe {
+            0%, 100% {
+                transform: translateY(0) scale(1) rotate(-15deg);
+            }
+            50% {
+                transform: translateY(-20px) scale(1.15) rotate(-15deg);
+            }
+        }
+
+        /* chintrolas responsive -bynd */
+        @media (max-width: 768px) {
+            .product-detail-container {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+
+            .product-detail-title {
+                font-size: 2rem;
+            }
+
+            .product-detail-price {
+                font-size: 1.5rem;
+            }
+
+            .gang-floating img {
+                max-width: 150px;
+            }
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: #c9a66b;
+            font-style: italic;
+            margin-top: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="gear-bg">
+        <div class="gear gear1"></div>
+        <div class="gear gear2"></div>
+        <div class="gear gear3"></div>
+    </div>
+
+    <!-- chintrolas imagen gang flotante -bynd -->
+    <div class="gang-floating">
+        <img src="/resources/gang.png" alt="Gang">
+    </div>
+
+    <!-- aaa icono del carrito flotante -bynd -->
+    <div class="cart-icon" onclick="toggleCart()">
+        <span>🛒</span>
+        <div class="cart-count" id="cartCount">0</div>
+    </div>
+
+    <!-- vavavava modal del carrito -bynd -->
+    <div class="cart-modal" id="cartModal">
+        <div class="cart-modal-content">
+            <div class="cart-modal-header">
+                <h2>🛒 Mi Carrito</h2>
+                <button class="close-modal" onclick="toggleCart()">✕</button>
+            </div>
+            <div class="cart-modal-body" id="cartModalBody">
+                <div class="cart-empty">Tu carrito está vacío</div>
+            </div>
+            <div class="cart-modal-footer" id="cartModalFooter" style="display: none;">
+                <div class="cart-total">
+                    <span>Total:</span>
+                    <span id="cartTotal">$0</span>
+                </div>
+                <div class="cart-actions">
+                    <button class="clear-cart-btn" onclick="clearCart()">Vaciar carrito</button>
+                    <button class="checkout-btn" onclick="confirmarCompra()">Confirmar compra</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <header>
+        <div class="logo">
+            <h1>LA DESESPERANZA</h1>
+            <p class="subtitle">Panadería Artesanal desde 1889</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div id="productContent" class="loading">
+            Cargando producto...
+        </div>
+    </div>
+
+    <script>
+        // aaa obtenemos el id del producto de la url -bynd
+        const urlParams = new URLSearchParams(window.location.search);
+        const productId = urlParams.get('id');
+        let currentProduct = null;
+        let quantity = 1;
+
+        // vavavava carrito en localStorage -bynd
+        function getCart() {
+            const cart = localStorage.getItem('cart');
+            return cart ? JSON.parse(cart) : [];
+        }
+
+        function saveCart(cart) {
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateCartCount();
+        }
+
+        // ey actualizar contador del carrito -bynd
+        function updateCartCount() {
+            const cart = getCart();
+            const totalItems = cart.reduce((sum, item) => sum + item.cantidad, 0);
+            document.getElementById('cartCount').textContent = totalItems;
+        }
+
+        // q chidoteee funcion para agregar al carrito -bynd
+        function addToCart() {
+            if (!currentProduct) return;
+
+            const cart = getCart();
+            const precio = parseFloat(currentProduct.price.replace('$', ''));
+            const existingIndex = cart.findIndex(item => item.id === currentProduct.id);
+            
+            if (existingIndex !== -1) {
+                cart[existingIndex].cantidad += quantity;
+            } else {
+                cart.push({
+                    id: currentProduct.id,
+                    nombre: currentProduct.name,
+                    precio: precio,
+                    cantidad: quantity,
+                    imagen: currentProduct.image
+                });
+            }
+            
+            saveCart(cart);
+            alert(`¡${currentProduct.name} agregado al carrito! (${quantity} unidad${quantity > 1 ? 'es' : ''})`);
+        }
+
+        // chintrolas funciones para la cantidad -bynd
+        function increaseQuantity() {
+            quantity++;
+            document.getElementById('quantityDisplay').textContent = quantity;
+        }
+
+        function decreaseQuantity() {
+            if (quantity > 1) {
+                quantity--;
+                document.getElementById('quantityDisplay').textContent = quantity;
+            }
+        }
+
+        // vavavava funcion para toggle del modal -bynd
+        function toggleCart() {
+            const modal = document.getElementById('cartModal');
+            modal.classList.toggle('active');
+            if (modal.classList.contains('active')) {
+                loadCartModal();
+            }
+        }
+
+        // q chidoteee funcion para cargar el carrito en el modal -bynd
+        function loadCartModal() {
+            const cart = getCart();
+            const modalBody = document.getElementById('cartModalBody');
+            const modalFooter = document.getElementById('cartModalFooter');
+            
+            if (cart.length === 0) {
+                modalBody.innerHTML = '<div class="cart-empty">Tu carrito está vacío</div>';
+                modalFooter.style.display = 'none';
+            } else {
+                modalBody.innerHTML = cart.map(item => `
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            <img src="${item.imagen}" alt="${item.nombre}">
+                        </div>
+                        <div class="cart-item-info">
+                            <div class="cart-item-name">${item.nombre}</div>
+                            <div class="cart-item-price">$${item.precio} c/u</div>
+                        </div>
+                        <div class="cart-item-actions">
+                            <div class="cart-item-quantity">
+                                <button onclick="updateItemQuantity(${item.id}, ${item.cantidad - 1})">-</button>
+                                <span>${item.cantidad}</span>
+                                <button onclick="updateItemQuantity(${item.id}, ${item.cantidad + 1})">+</button>
+                            </div>
+                            <button class="remove-item" onclick="removeFromCart(${item.id})">🗑️</button>
+                        </div>
+                    </div>
+                `).join('');
+                
+                const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+                document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+                modalFooter.style.display = 'block';
+            }
+        }
+
+        // ey funcion para actualizar cantidad -bynd
+        function updateItemQuantity(id, newQuantity) {
+            if (newQuantity < 1) {
+                removeFromCart(id);
+                return;
+            }
+            
+            const cart = getCart();
+            const itemIndex = cart.findIndex(item => item.id === id);
+            
+            if (itemIndex !== -1) {
+                cart[itemIndex].cantidad = newQuantity;
+                saveCart(cart);
+                loadCartModal();
+            }
+        }
+
+        // chintrolas funcion para eliminar item -bynd
+        function removeFromCart(id) {
+            let cart = getCart();
+            cart = cart.filter(item => item.id !== id);
+            saveCart(cart);
+            loadCartModal();
+        }
+
+        // aaa funcion para confirmar compra y restar del stock -bynd
+        async function confirmarCompra() {
+            const cart = getCart();
+            
+            if (cart.length === 0) {
+                alert('Tu carrito está vacío');
+                return;
+            }
+            
+            const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+            const resumen = cart.map(item => `${item.nombre} x${item.cantidad}`).join('\n');
+            
+            const confirmar = confirm(`¿Confirmar compra?\n\n${resumen}\n\nTotal: $${total.toFixed(2)}`);
+            
+            if (!confirmar) return;
+            
+            try {
+                for (const item of cart) {
+                    const response = await fetch(`http://localhost:3001/api/productos/${item.id}/stock`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ cantidad: -item.cantidad })
+                    });
+                    
+                    if (!response.ok) {
+                        throw new Error(`Error al actualizar stock de ${item.nombre}`);
+                    }
+                }
+                
+                localStorage.removeItem('cart');
+                updateCartCount();
+                loadCartModal();
+                alert('¡Compra realizada con éxito! 🎉\n\nGracias por tu compra en La Desesperanza');
+                
+            } catch (error) {
+                alert('Error al procesar la compra. Por favor intenta de nuevo.');
+            }
+        }
+
+        // fokeis funcion para vaciar carrito -bynd
+        function clearCart() {
+            if (!confirm('¿Estás seguro de vaciar el carrito?')) return;
+            localStorage.removeItem('cart');
+            updateCartCount();
+            loadCartModal();
+        }
+
+        // aaa funcion para cargar el producto -bynd
+        async function loadProduct() {
+            if (!productId) {
+                document.getElementById('productContent').innerHTML = `
+                    <div class="product-detail-container">
+                        <div style="grid-column: 1/-1; text-align: center;">
+                            <h2 style="color: #d4a574;">Producto no encontrado</h2>
+                            <a href="index.html" class="back-button">Volver al inicio</a>
+                        </div>
+                    </div>
+                `;
+                return;
+            }
+
+            try {
+                const response = await fetch(`http://localhost:3001/api/productos/${productId}`);
+
+                if (!response.ok) {
+                    throw new Error('Producto no encontrado');
+                }
+
+                const product = await response.json();
+                currentProduct = product;
+
+                document.getElementById('productContent').innerHTML = `
+                    <div class="product-detail-container">
+                        <div class="product-detail-image">
+                            <img src="${product.image}" alt="${product.name}" 
+                                 onerror="this.parentElement.innerHTML='<span style=color:#d4a574;font-size:1.2rem;>Imagen no disponible</span>'">
+                        </div>
+                        <div class="product-detail-info">
+                            <h1 class="product-detail-title">${product.name}</h1>
+                            <p class="product-detail-description">${product.desc}</p>
+                            <p class="product-detail-price">${product.price}</p>
+                            <p class="product-detail-stock">Stock disponible: ${product.stock} unidades</p>
+                            
+                            <div class="quantity-selector">
+                                <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                                <span class="quantity-display" id="quantityDisplay">1</span>
+                                <button class="quantity-btn" onclick="increaseQuantity()">+</button>
+                            </div>
+                            
+                            <button class="add-to-cart-btn" onclick="addToCart()">🛒 Agregar al carrito</button>
+                            <a href="index.html" class="back-button">← Volver al catálogo</a>
+                            
+                            <p class="note">*Su presentación final podra cambiar con respecto a las imágenes mostradas</p>
+                        </div>
+                    </div>
+                `;
+
+            } catch (error) {
+                document.getElementById('productContent').innerHTML = `
+                    <div class="product-detail-container">
+                        <div style="grid-column: 1/-1; text-align: center;">
+                            <h2 style="color: #d4a574;">Error cargando el producto</h2>
+                            <p style="color: #f4e4c1; margin: 1rem 0;">No se pudo cargar la información del producto.</p>
+                            <a href="index.html" class="back-button">Volver al inicio</a>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // q chidoteee cargamos el producto cuando este listo el dom -bynd
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProduct();
+            updateCartCount();
+        });
+    </script>
+</body>
+</html>
