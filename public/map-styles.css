@@ -1,0 +1,66 @@
+/* aaa estilos para la sección del mapa -bynd */
+.map-section {
+    margin: 4rem 0;
+    padding: 2rem;
+    background: rgba(61, 40, 23, 0.3);
+    border-radius: 15px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.map-section h2 {
+    color: #d4a574;
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 0.5rem;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+}
+
+.section-subtitle {
+    text-align: center;
+    color: #a88559;
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+    font-style: italic;
+}
+
+/* ey el contenedor del mapa -bynd */
+#map {
+    height: 500px;
+    width: 100%;
+    border-radius: 10px;
+    border: 3px solid #8b6f47;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    z-index: 1;
+}
+
+/* chintrolas estilos responsive -bynd */
+@media (max-width: 768px) {
+    #map {
+        height: 350px;
+    }
+    
+    .map-section h2 {
+        font-size: 2rem;
+    }
+    
+    .section-subtitle {
+        font-size: 1rem;
+    }
+}
+
+/* q chidoteee personalizar el popup -bynd */
+.leaflet-popup-content-wrapper {
+    background: rgba(61, 40, 23, 0.95);
+    color: #d4a574;
+    border-radius: 8px;
+    border: 2px solid #8b6f47;
+}
+
+.leaflet-popup-content {
+    font-family: 'Georgia', serif;
+    font-size: 14px;
+}
+
+.leaflet-popup-tip {
+    background: rgba(61, 40, 23, 0.95);
+}
