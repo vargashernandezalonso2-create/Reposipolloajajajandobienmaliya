@@ -57,8 +57,43 @@
                 </div>
             </div>
         </section>
+
+        <section class="map-section">
+            <h2>⚙ Ubicación ⚙</h2>
+            <p class="section-subtitle">Visítanos en Stuttgart, donde se hacen los Porsche</p>
+            <div id="map"></div>
+        </section>
     </div>
 
+    <!-- ey aquí va el CSS de Leaflet -bynd -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    
+    <!-- vavavava ahora el JS de Leaflet -bynd -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <script>
+        // aaa inicializamos el mapa en Stuttgart -bynd
+        const map = L.map('map').setView([48.7758, 9.1829], 13);
+        
+        // ey agregamos el tile layer -bynd
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '© OpenStreetMap contributors',
+            maxZoom: 19
+        }).addTo(map);
+        
+        // chintrolas ponemos el marker en la fábrica de Porsche -bynd
+        const marker = L.marker([48.7758, 9.1829]).addTo(map);
+        marker.bindPopup('<b>La Desesperanza</b><br>Panadería Artesanal<br>Stuttgart, Alemania').openPopup();
+        
+        // q chidoteee también podemos agregar un círculo -bynd
+        const circle = L.circle([48.7758, 9.1829], {
+            color: '#d4a574',
+            fillColor: '#8b6f47',
+            fillOpacity: 0.2,
+            radius: 500
+        }).addTo(map);
+    </script>
+    
     <script src="app.js"></script>
 </body>
 </html>
