@@ -165,7 +165,7 @@ async function getRandomProducts(count) {
         }
         
         const products = await response.json();
-        console.log('DEBUG] Productos aleatorios obtenidos (SIN especiales):', products.length);
+        console.log('[DEBUG] Productos aleatorios obtenidos (SIN especiales):', products.length);
         console.log('[DEBUG] Productos:', products.map(p => p.name));
         return products;
         
@@ -222,87 +222,6 @@ function goToProduct(productId) {
     window.location.href = `producto.html?id=${productId}`;
 }
 
-let gearRotation = 0;
-let isDragging = false;
-let startAngle = 0;
-let rotationStart = 0;
-let totalRotation = 0;
-
-console.log('[DEBUG] Variables del engranaje inicializadas');
-
-function getAngle(e, element) {
-    const rect = element.getBoundingClientRect();
-    const centerX = rect.left + rect.width / 2;
-    const centerY = rect.top + rect.height / 2;
-    
-    const clientX = e.type.includes('touch') ? e.touches[0].clientX : e.clientX;
-    const clientY = e.type.includes('touch') ? e.touches[0].clientY : e.clientY;
-    
-    const angle = Math.atan2(clientY - centerY, clientX - centerX) * (180 / Math.PI);
-    return angle;
-}
-
-function startDrag(e) {
-    console.log('[DEBUG] Inicio de arrastre');
-    e.preventDefault();
-    isDragging = true;
-    const gear = document.getElementById('interactiveGear');
-    
-    if (!gear) {
-        console.error(' [ERROR] No se encontró el engranaje');
-        return;
-    }
-    
-    startAngle = getAngle(e, gear);
-    rotationStart = gearRotation;
-    console.log('[DEBUG] Ángulo inicial:', startAngle, 'Rotación inicial:', rotationStart);
-}
-
-function drag(e) {
-    if (!isDragging) return;
-    e.preventDefault();
-    
-    const gear = document.getElementById('interactiveGear');
-    if (!gear) {
-        console.error('❌ [ERROR] No se encontró el engranaje durante el arrastre');
-        return;
-    }
-    
-    const currentAngle = getAngle(e, gear);
-    let delta = currentAngle - startAngle;
-    
-    if (delta > 180) delta -= 360;
-    if (delta < -180) delta += 360;
-    
-    gearRotation = rotationStart + delta;
-    totalRotation = gearRotation;
-    
-    console.log('🔄 [DEBUG] Arrastrando - Delta:', delta.toFixed(2), 'Rotación total:', totalRotation.toFixed(2));
-    
-    gear.style.transform = `rotate(${gearRotation}deg)`;
-}
-
-function endDrag(e) {
-    if (!isDragging) return;
-    console.log('🛑 [DEBUG] Fin de arrastre - Rotación total:', totalRotation.toFixed(2));
-    e.preventDefault();
-    isDragging = false;
-    
-    if (Math.abs(totalRotation) >= 160) {
-        console.log('🎉 [DEBUG] ¡Media vuelta completa! Cambiando productos...');
-        renderRandomProducts();
-        gearRotation = 0;
-        totalRotation = 0;
-        const gear = document.getElementById('interactiveGear');
-        if (gear) {
-            gear.style.transform = 'rotate(0deg)';
-            console.log('[DEBUG] Engranaje reseteado');
-        }
-    } else {
-        console.log('[DEBUG] No completó media vuelta, necesita', (160 - Math.abs(totalRotation)).toFixed(2), 'grados más');
-    }
-}
-
 function setupCarouselClicks() {
     console.log('[DEBUG] Configurando clicks del carousel...');
     setTimeout(() => {
@@ -312,7 +231,7 @@ function setupCarouselClicks() {
         carouselItems.forEach((item, index) => {
             item.addEventListener('click', async function() {
                 const productImage = this.getAttribute('data-product-image');
-                console.log(' [DEBUG] Click en carousel item', index, ', buscando por imagen:', productImage);
+                console.log('🖱️ [DEBUG] Click en carousel item', index, ', buscando por imagen:', productImage);
                 
                 try {
                     const response = await fetch(`${API_BASE}/api/productos/buscar-imagen/${encodeURIComponent(productImage)}`);
@@ -322,50 +241,29 @@ function setupCarouselClicks() {
                     }
                     
                     const product = await response.json();
-                    console.log(' [DEBUG] Producto encontrado:', product);
+                    console.log('✅ [DEBUG] Producto encontrado:', product);
                     window.location.href = `producto.html?id=${product.id}`;
                     
                 } catch (error) {
-                    console.error(' [ERROR] Error buscando producto:', error);
+                    console.error('❌ [ERROR] Error buscando producto:', error);
                     alert('No se pudo encontrar el producto. Asegúrate de que esté en la base de datos.');
                 }
             });
         });
-        console.log(' [DEBUG] Carousel configurado para clicks');
+        console.log('✅ [DEBUG] Carousel configurado para clicks');
     }, 500); 
 }
 
-console.log(' [DEBUG] Esperando carga del DOM...');
+console.log('🚀 [DEBUG] Esperando carga del DOM...');
 
 document.addEventListener('DOMContentLoaded', () => {
-    console.log('[DEBUG] DOM cargado!');
-    
-    const gear = document.getElementById('interactiveGear');
-    
-    if (!gear) {
-        console.error(' [ERROR] No se encontró el elemento interactiveGear en el DOM');
-        console.log(' [DEBUG] Elementos disponibles con ID:', 
-            Array.from(document.querySelectorAll('[id]')).map(el => el.id));
-        return;
-    }
-    
-    console.log('[DEBUG] Engranaje encontrado:', gear);
-    
-    gear.addEventListener('mousedown', startDrag);
-    document.addEventListener('mousemove', drag);
-    document.addEventListener('mouseup', endDrag);
-    console.log(' [DEBUG] Eventos de mouse agregados');
-    
-    gear.addEventListener('touchstart', startDrag, { passive: false });
-    document.addEventListener('touchmove', drag, { passive: false });
-    document.addEventListener('touchend', endDrag, { passive: false });
-    console.log(' [DEBUG] Eventos de touch agregados');
+    console.log('✅ [DEBUG] DOM cargado!');
     
     setupCarouselClicks();
     loadSeasonalProducts(); 
     loadProducts();
     startAutoplay(); 
-    console.log(' [DEBUG] Inicialización completa!');
+    console.log('✅ [DEBUG] Inicialización completa!');
 });
 
 console.log('[DEBUG] Script cargado completamente');
