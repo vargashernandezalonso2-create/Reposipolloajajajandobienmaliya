@@ -7,22 +7,22 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="gear-bg">
-        <div class="gear gear1"></div>
-        <div class="gear gear2"></div>
-        <div class="gear gear3"></div>
+    <!-- aaa particulas cyber flotantes -bynd -->
+    <div class="cyber-bg">
+        <div class="grid-lines"></div>
+        <div class="particles" id="particles"></div>
     </div>
 
-    <header>
+    <header class="glass-header">
         <div class="logo">
             <h1>LA DESESPERANZA</h1>
-            <p class="subtitle">Panadería Artesanal desde 1889</p>
+            <p class="subtitle">Panadería Artesanal · Est. 1889</p>
         </div>
     </header>
 
     <div class="container">
-        <section class="hero">
-            <h2 id="heroTitle">🎃 Feliz Halloween 🎃</h2>
+        <section class="hero glass-card">
+            <h2 id="heroTitle" class="neon-text">🎃 Feliz Halloween 🎃</h2>
             
             <div class="carousel">
                 <div class="carousel-inner" id="carouselInner">
@@ -38,10 +38,12 @@
             </div>
         </section>
 
-        <section class="random-section">
-            <h2>Nuestros Productos</h2>
-            <p class="section-subtitle">Selección de productos artesanales de La Desesperanza</p>
-            <div class="random-products" id="randomProducts"></div>
+        <section class="products-section glass-card">
+            <div class="section-header">
+                <h2 class="neon-text">Productos Disponibles</h2>
+                <p class="section-subtitle">Explora nuestra selección artesanal</p>
+            </div>
+            <div class="products-grid" id="randomProducts"></div>
         </section>
     </div>
 
