@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Producto - La Desesperanza</title>
     <link rel="stylesheet" href="style.css">
+    <!-- vavavava leaflet para el mapita de groenlandia -bynd -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         /* aaa estilos para la pagina de producto -bynd */
         .product-detail-container {
@@ -400,6 +403,131 @@
             background: linear-gradient(135deg, rgba(212, 165, 116, 0.8), rgba(139, 111, 71, 0.8));
         }
 
+        /* aaa estilos para opciones de envio -bynd */
+        .shipping-options {
+            margin-bottom: 1.5rem;
+            padding: 1.5rem;
+            background: rgba(44, 24, 16, 0.5);
+            border: 2px solid #8b6f47;
+            border-radius: 8px;
+        }
+
+        .shipping-options h3 {
+            font-family: 'Cinzel', serif;
+            color: #d4a574;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .shipping-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            padding: 1rem;
+            margin-bottom: 0.8rem;
+            background: rgba(61, 40, 23, 0.6);
+            border: 2px solid #8b6f47;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .shipping-option:hover {
+            background: rgba(61, 40, 23, 0.8);
+            border-color: #d4a574;
+        }
+
+        .shipping-option.selected {
+            background: rgba(212, 165, 116, 0.2);
+            border-color: #d4a574;
+        }
+
+        .shipping-option input[type="radio"] {
+            margin-top: 0.3rem;
+            cursor: pointer;
+        }
+
+        .shipping-details {
+            flex: 1;
+        }
+
+        .shipping-name {
+            font-family: 'Cinzel', serif;
+            color: #d4a574;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+        }
+
+        .shipping-description {
+            color: #c9a66b;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .shipping-price {
+            font-family: 'Cinzel', serif;
+            color: #d4a574;
+            font-size: 1.2rem;
+            font-weight: bold;
+            white-space: nowrap;
+        }
+
+        .greenland-map-container {
+            margin-top: 0.8rem;
+            border: 2px solid #8b6f47;
+            border-radius: 5px;
+            overflow: hidden;
+            display: none;
+        }
+
+        .greenland-map-container.active {
+            display: block;
+        }
+
+        #greenlandMap {
+            height: 250px;
+            width: 100%;
+        }
+
+        .greenland-coordinates {
+            padding: 0.8rem;
+            background: rgba(44, 24, 16, 0.8);
+            border-top: 2px solid #8b6f47;
+            color: #c9a66b;
+            font-size: 0.85rem;
+            text-align: center;
+        }
+
+        .greenland-coordinates a {
+            color: #d4a574;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .greenland-coordinates a:hover {
+            text-decoration: underline;
+        }
+
+        .subtotal-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            color: #c9a66b;
+            font-size: 1.1rem;
+        }
+
+        .shipping-cost-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            color: #c9a66b;
+            font-size: 1.1rem;
+            border-top: 1px solid #8b6f47;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+        }
+
         /* vavavava imagen gang flotante -bynd */
         .gang-floating {
             position: fixed;
@@ -483,6 +611,46 @@
                 <div class="cart-empty">Tu carrito está vacío</div>
             </div>
             <div class="cart-modal-footer" id="cartModalFooter" style="display: none;">
+                <!-- aaa opciones de envio -bynd -->
+                <div class="shipping-options">
+                    <h3>🚚 Opciones de Entrega</h3>
+                    
+                    <div class="shipping-option" id="deliveryOption" onclick="selectShipping('delivery')">
+                        <input type="radio" name="shipping" id="deliveryRadio" checked>
+                        <div class="shipping-details">
+                            <div class="shipping-name">📦 Envío a Domicilio</div>
+                            <div class="shipping-description">Recibe tu pedido en la puerta de tu casa</div>
+                        </div>
+                        <div class="shipping-price" id="deliveryPrice">$0</div>
+                    </div>
+
+                    <div class="shipping-option" id="pickupOption" onclick="selectShipping('pickup')">
+                        <input type="radio" name="shipping" id="pickupRadio">
+                        <div class="shipping-details">
+                            <div class="shipping-name">🏔️ Recoger en Tienda</div>
+                            <div class="shipping-description">Summit Station, Groenlandia<br>72°35'16"N 38°25'56"W</div>
+                            
+                            <!-- chintrolas mapa de groenlandia -bynd -->
+                            <div class="greenland-map-container" id="greenlandMapContainer">
+                                <div id="greenlandMap"></div>
+                                <div class="greenland-coordinates">
+                                    📍 <a href="https://www.google.com/maps?q=72.587778,-38.432222" target="_blank">Ver en Google Maps</a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="shipping-price">GRATIS</div>
+                    </div>
+                </div>
+
+                <!-- vavavava resumen de totales -bynd -->
+                <div class="subtotal-row">
+                    <span>Subtotal:</span>
+                    <span id="cartSubtotal">$0</span>
+                </div>
+                <div class="shipping-cost-row">
+                    <span>Envío:</span>
+                    <span id="shippingCostDisplay">$0</span>
+                </div>
                 <div class="cart-total">
                     <span>Total:</span>
                     <span id="cartTotal">$0</span>
@@ -520,6 +688,87 @@
     const productId = urlParams.get('id');
     let currentProduct = null;
     let quantity = 1;
+
+    // aaa variables para envio -bynd
+    let shippingCost = 0;
+    let selectedShipping = 'delivery';
+    let greenlandMap = null;
+
+    // q chidoteee funcion para generar costo de envio aleatorio -bynd
+    function getShippingCost() {
+        let cost = localStorage.getItem('shippingCost');
+        if (!cost) {
+            cost = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;
+            localStorage.setItem('shippingCost', cost);
+        }
+        return parseFloat(cost);
+    }
+
+    // vavavava funcion para seleccionar opcion de envio -bynd
+    function selectShipping(option) {
+        selectedShipping = option;
+        
+        // ey actualizamos los radios -bynd
+        document.getElementById('deliveryRadio').checked = (option === 'delivery');
+        document.getElementById('pickupRadio').checked = (option === 'pickup');
+        
+        // chintrolas actualizamos clases selected -bynd
+        document.getElementById('deliveryOption').classList.toggle('selected', option === 'delivery');
+        document.getElementById('pickupOption').classList.toggle('selected', option === 'pickup');
+        
+        // aaa mostramos/ocultamos mapa -bynd
+        const mapContainer = document.getElementById('greenlandMapContainer');
+        if (option === 'pickup') {
+            mapContainer.classList.add('active');
+            if (!greenlandMap) {
+                initGreenlandMap();
+            }
+        } else {
+            mapContainer.classList.remove('active');
+        }
+        
+        // vavavava recalculamos totales -bynd
+        updateCartTotals();
+    }
+
+    // fokeis funcion para inicializar mapa de groenlandia -bynd
+    function initGreenlandMap() {
+        try {
+            const coords = [72.587778, -38.432222]; // Summit Station, Groenlandia
+            
+            greenlandMap = L.map('greenlandMap', {
+                center: coords,
+                zoom: 5,
+                scrollWheelZoom: false
+            });
+            
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(greenlandMap);
+            
+            L.marker(coords).addTo(greenlandMap)
+                .bindPopup('<b>Summit Station</b><br>Tu punto de recogida 🏔️')
+                .openPopup();
+                
+            console.log('✅ Mapa de Groenlandia inicializado');
+        } catch (error) {
+            console.error('❌ Error inicializando mapa:', error);
+        }
+    }
+
+    // chintrolas funcion para actualizar totales del carrito -bynd
+    function updateCartTotals() {
+        const cart = getCart();
+        const subtotal = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+        
+        const shipping = selectedShipping === 'delivery' ? shippingCost : 0;
+        const total = subtotal + shipping;
+        
+        document.getElementById('cartSubtotal').textContent = `$${subtotal.toFixed(2)}`;
+        document.getElementById('shippingCostDisplay').textContent = selectedShipping === 'delivery' ? `$${shipping.toFixed(2)}` : 'GRATIS';
+        document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
+        document.getElementById('deliveryPrice').textContent = `$${shippingCost.toFixed(2)}`;
+    }
 
     // vavavava carrito en localStorage -bynd
     function getCart() {
@@ -591,6 +840,9 @@
         const modalBody = document.getElementById('cartModalBody');
         const modalFooter = document.getElementById('cartModalFooter');
         
+        // aaa inicializamos costo de envio -bynd
+        shippingCost = getShippingCost();
+        
         if (cart.length === 0) {
             modalBody.innerHTML = '<div class="cart-empty">Tu carrito está vacío</div>';
             modalFooter.style.display = 'none';
@@ -615,9 +867,13 @@
                 </div>
             `).join('');
             
-            const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-            document.getElementById('cartTotal').textContent = `$${total.toFixed(2)}`;
             modalFooter.style.display = 'block';
+            
+            // chintrolas actualizamos totales con envio -bynd
+            updateCartTotals();
+            
+            // ey reseteamos opcion de envio a delivery por defecto -bynd
+            selectShipping('delivery');
         }
     }
 
@@ -655,10 +911,25 @@
             return;
         }
         
-        const total = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-        const resumen = cart.map(item => `${item.nombre} x${item.cantidad}`).join('\n');
+        const subtotal = cart.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+        const shipping = selectedShipping === 'delivery' ? shippingCost : 0;
+        const total = subtotal + shipping;
+        const resumen = cart.map(item => `${item.nombre} x${item.cantidad} - $${(item.precio * item.cantidad).toFixed(2)}`).join('\n');
         
-        const confirmar = confirm(`¿Confirmar compra?\n\n${resumen}\n\nTotal: $${total.toFixed(2)}`);
+        // chintrolas armamos el mensaje con info de envio -bynd
+        let mensaje = `🛒 RESUMEN DE TU COMPRA\n\n${resumen}\n\n`;
+        mensaje += `💰 Subtotal: $${subtotal.toFixed(2)}\n`;
+        
+        if (selectedShipping === 'delivery') {
+            mensaje += `🚚 Envío a domicilio: $${shipping.toFixed(2)}\n`;
+        } else {
+            mensaje += `🏔️ Recogida en Summit Station, Groenlandia\n`;
+            mensaje += `📍 72°35'16"N 38°25'56"W\n`;
+        }
+        
+        mensaje += `\n✨ TOTAL: $${total.toFixed(2)}\n\n¿Confirmar compra?`;
+        
+        const confirmar = confirm(mensaje);
         
         if (!confirmar) return;
         
@@ -675,10 +946,17 @@
                 }
             }
             
+            // aaa limpiamos todo -bynd
             localStorage.removeItem('cart');
+            localStorage.removeItem('shippingCost'); // chintrolas reseteamos el envio para proxima compra
             updateCartCount();
             loadCartModal();
-            alert('¡Compra realizada con éxito! 🎉\n\nGracias por tu compra en La Desesperanza');
+            
+            let successMsg = '¡Compra realizada con éxito! 🎉\n\nGracias por tu compra en La Desesperanza';
+            if (selectedShipping === 'pickup') {
+                successMsg += '\n\n🏔️ Nos vemos en Groenlandia!';
+            }
+            alert(successMsg);
             
         } catch (error) {
             console.error('❌ Error en compra:', error);
