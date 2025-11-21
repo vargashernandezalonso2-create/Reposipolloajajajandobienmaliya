@@ -39,61 +39,12 @@
         </section>
 
         <section class="random-section">
-            <h2>⚙ Panes ⚙</h2>
-            <p class="section-subtitle">Si no te gustan, puedes girar el engranaje tú mismo</p>
+            <h2>Nuestros Productos</h2>
+            <p class="section-subtitle">Selección de productos artesanales de La Desesperanza</p>
             <div class="random-products" id="randomProducts"></div>
-            
-            <div class="gear-control">
-                <p class="gear-control-text">Gira el engranaje para cambiar la selección</p>
-                <div class="interactive-gear" id="interactiveGear">
-                    <svg viewBox="0 0 100 100">
-                        <path d="M50,10 L55,20 L65,20 L60,30 L70,35 L65,45 L70,55 L60,60 L65,70 L55,70 L50,80 L45,70 L35,70 L40,60 L30,55 L35,45 L30,35 L40,30 L35,20 L45,20 Z" 
-                              fill="#d4a574" 
-                              stroke="#8b6f47" 
-                              stroke-width="2"/>
-                        <circle cx="50" cy="50" r="15" fill="#3d2817" stroke="#8b6f47" stroke-width="2"/>
-                    </svg>
-                    <div class="gear-center"></div>
-                </div>
-            </div>
-        </section>
-
-        <section class="map-section">
-            <h2>⚙ Ubicación ⚙</h2>
-            <p class="section-subtitle">Visítanos en Stuttgart, donde se hacen los Porsche</p>
-            <div id="map"></div>
         </section>
     </div>
 
-    <!-- ey aquí va el CSS de Leaflet -bynd -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    
-    <!-- vavavava ahora el JS de Leaflet -bynd -->
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    
-    <script>
-        // aaa inicializamos el mapa en Stuttgart -bynd
-        const map = L.map('map').setView([48.7758, 9.1829], 13);
-        
-        // ey agregamos el tile layer -bynd
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-            attribution: '© OpenStreetMap contributors',
-            maxZoom: 19
-        }).addTo(map);
-        
-        // chintrolas ponemos el marker en la fábrica de Porsche -bynd
-        const marker = L.marker([48.7758, 9.1829]).addTo(map);
-        marker.bindPopup('<b>La Desesperanza</b><br>Panadería Artesanal<br>Stuttgart, Alemania').openPopup();
-        
-        // q chidoteee también podemos agregar un círculo -bynd
-        const circle = L.circle([48.7758, 9.1829], {
-            color: '#d4a574',
-            fillColor: '#8b6f47',
-            fillOpacity: 0.2,
-            radius: 500
-        }).addTo(map);
-    </script>
-    
     <script src="app.js"></script>
 </body>
 </html>
