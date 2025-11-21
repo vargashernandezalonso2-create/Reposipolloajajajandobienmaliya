@@ -13,7 +13,7 @@ body {
     overflow-x: hidden;
 }
 
-/* ey animación de engranajes flotantes -bynd */
+/* ey animacion de engranajes flotantes -bynd */
 @keyframes rotate {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
@@ -31,11 +31,11 @@ body {
     width: 100%;
     height: 100%;
     pointer-events: none;
-    opacity: 0.1;
+    opacity: 0.05;
     z-index: 0;
 }
 
-/* aaa estos engranajes se ven bien chidos -bynd */
+/* aaa estos engranajes de fondo mas sutiles -bynd */
 .gear {
     position: absolute;
     width: 150px;
@@ -112,7 +112,7 @@ h1 {
     padding: 3rem 2rem;
 }
 
-/* ey la sección hero con halloween -bynd */
+/* ey la seccion hero con halloween -bynd */
 .hero {
     text-align: center;
     padding: 4rem 2rem 2rem;
@@ -256,7 +256,7 @@ h1 {
     transform: scale(1.3);
 }
 
-/* ey sección de panes aleatorios -bynd */
+/* ey seccion de productos profesional -bynd */
 .random-section {
     margin: 4rem 0;
     padding: 2rem;
@@ -287,56 +287,6 @@ h1 {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     gap: 2rem;
-    margin-bottom: 3rem;
-}
-
-/* q chidoteee el engranaje interactivo -bynd */
-.gear-control {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 1rem;
-    margin-top: 3rem;
-}
-
-.gear-control-text {
-    font-family: 'Cinzel', serif;
-    font-size: 1.3rem;
-    color: #d4a574;
-    text-align: center;
-}
-
-.interactive-gear {
-    width: 150px;
-    height: 150px;
-    cursor: grab;
-    position: relative;
-    user-select: none;
-    touch-action: none;
-}
-
-.interactive-gear:active {
-    cursor: grabbing;
-}
-
-/* aaa el engranaje svg bien diseñado -bynd */
-.interactive-gear svg {
-    width: 100%;
-    height: 100%;
-    filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.5));
-}
-
-.gear-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 40px;
-    height: 40px;
-    background: #d4a574;
-    border-radius: 50%;
-    border: 3px solid #8b6f47;
-    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.3);
 }
 
 .product-card {
@@ -349,7 +299,7 @@ h1 {
     overflow: hidden;
 }
 
-/* chintrolas la animación del hover -bynd */
+/* chintrolas la animacion del hover -bynd */
 .product-card::before {
     content: '';
     position: absolute;
