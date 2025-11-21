@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
 
 * {
     margin: 0;
@@ -6,158 +6,190 @@
     box-sizing: border-box;
 }
 
+:root {
+    --cyber-bg: #0a0e27;
+    --cyber-bg-secondary: #1a1d3f;
+    --neon-cyan: #00f0ff;
+    --neon-magenta: #ff00ff;
+    --neon-green: #00ff88;
+    --neon-purple: #b624ff;
+    --glass-white: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.18);
+    --text-primary: #ffffff;
+    --text-secondary: rgba(255, 255, 255, 0.7);
+}
+
 body {
-    font-family: 'Crimson Text', serif;
-    background: linear-gradient(135deg, #2c1810 0%, #3d2817 50%, #2c1810 100%);
-    color: #f4e4c1;
+    font-family: 'Inter', sans-serif;
+    background: var(--cyber-bg);
+    color: var(--text-primary);
     overflow-x: hidden;
+    position: relative;
 }
 
-/* ey animacion de engranajes flotantes -bynd */
-@keyframes rotate {
-    from { transform: rotate(0deg); }
-    to { transform: rotate(360deg); }
-}
-
-@keyframes float {
-    0%, 100% { transform: translateY(0px); }
-    50% { transform: translateY(-20px); }
-}
-
-.gear-bg {
+/* aaa fondo cyber con grid y particulas -bynd */
+.cyber-bg {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
     pointer-events: none;
-    opacity: 0.05;
     z-index: 0;
+    overflow: hidden;
 }
 
-/* aaa estos engranajes de fondo mas sutiles -bynd */
-.gear {
+.grid-lines {
     position: absolute;
-    width: 150px;
-    height: 150px;
-    border: 8px solid #d4a574;
-    border-radius: 50%;
-    animation: rotate 20s linear infinite;
-}
-
-.gear::before,
-.gear::after {
-    content: '';
-    position: absolute;
-    background: #d4a574;
-}
-
-.gear::before {
     width: 100%;
-    height: 20px;
-    top: 50%;
-    left: 0;
-    transform: translateY(-50%);
-}
-
-.gear::after {
-    width: 20px;
     height: 100%;
-    left: 50%;
-    top: 0;
-    transform: translateX(-50%);
+    background-image: 
+        linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: gridMove 20s linear infinite;
 }
 
-.gear1 { top: 10%; left: 5%; animation-duration: 15s; }
-.gear2 { top: 60%; right: 10%; animation-duration: 25s; animation-direction: reverse; }
-.gear3 { bottom: 10%; left: 15%; animation-duration: 18s; opacity: 0.15; }
+@keyframes gridMove {
+    0% { transform: translateY(0); }
+    100% { transform: translateY(50px); }
+}
 
-header {
+.particles {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.particle {
+    position: absolute;
+    width: 2px;
+    height: 2px;
+    background: var(--neon-cyan);
+    border-radius: 50%;
+    animation: particleFloat 10s linear infinite;
+    box-shadow: 0 0 10px var(--neon-cyan);
+}
+
+@keyframes particleFloat {
+    0% { 
+        transform: translateY(100vh) translateX(0);
+        opacity: 0;
+    }
+    10% { opacity: 1; }
+    90% { opacity: 1; }
+    100% { 
+        transform: translateY(-100px) translateX(100px);
+        opacity: 0;
+    }
+}
+
+/* vavavava glassmorfismo header -bynd */
+.glass-header {
     position: relative;
     z-index: 10;
-    background: linear-gradient(to bottom, rgba(28, 15, 8, 0.95), rgba(44, 24, 16, 0.9));
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--glass-border);
     padding: 2rem;
-    border-bottom: 3px solid #d4a574;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 8px 32px 0 rgba(0, 240, 255, 0.1);
 }
 
-/* vavavava el logo principal -bynd */
 .logo {
     text-align: center;
     position: relative;
 }
 
 h1 {
-    font-family: 'Cinzel', serif;
+    font-family: 'Orbitron', sans-serif;
     font-size: 4rem;
-    color: #d4a574;
-    text-shadow: 3px 3px 6px rgba(0, 0, 0, 0.7),
-                 0 0 20px rgba(212, 165, 116, 0.3);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--neon-cyan) 0%, var(--neon-magenta) 50%, var(--neon-green) 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: 0 0 30px rgba(0, 240, 255, 0.5);
     margin-bottom: 0.5rem;
-    letter-spacing: 0.1em;
+    letter-spacing: 0.2em;
+    animation: glowPulse 3s ease-in-out infinite;
+}
+
+@keyframes glowPulse {
+    0%, 100% { filter: drop-shadow(0 0 10px var(--neon-cyan)); }
+    50% { filter: drop-shadow(0 0 20px var(--neon-magenta)); }
 }
 
 .subtitle {
-    font-style: italic;
-    color: #c9a66b;
-    font-size: 1.3rem;
-    letter-spacing: 0.2em;
+    font-weight: 300;
+    color: var(--text-secondary);
+    font-size: 1rem;
+    letter-spacing: 0.3em;
+    text-transform: uppercase;
 }
 
 .container {
     position: relative;
     z-index: 10;
-    max-width: 1200px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 3rem 2rem;
 }
 
-/* ey la seccion hero con halloween -bynd */
-.hero {
-    text-align: center;
-    padding: 4rem 2rem 2rem;
-    background: linear-gradient(135deg, rgba(61, 40, 23, 0.8), rgba(44, 24, 16, 0.8));
-    border: 3px solid #8b6f47;
-    border-radius: 10px;
+/* q chidoteee glass cards -bynd */
+.glass-card {
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid var(--glass-border);
+    padding: 3rem;
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
     margin-bottom: 3rem;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5),
-                inset 0 0 50px rgba(212, 165, 116, 0.1);
-    position: relative;
+    transition: all 0.3s ease;
 }
 
-.hero::before {
-    content: '';
-    position: absolute;
-    top: -30px;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 3rem;
-    animation: float 3s ease-in-out infinite;
+.glass-card:hover {
+    border-color: var(--neon-cyan);
+    box-shadow: 0 8px 32px 0 rgba(0, 240, 255, 0.3);
+}
+
+/* ey hero section cyber -bynd */
+.hero {
+    text-align: center;
 }
 
 .hero h2 {
-    font-family: 'Cinzel', serif;
     font-size: 3rem;
-    color: #d4a574;
     margin-bottom: 2rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
-/* aaa el carrusel bien chido -bynd */
+.neon-text {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 700;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    filter: drop-shadow(0 0 10px var(--neon-cyan));
+}
+
+/* chintrolas carousel cyber -bynd */
 .carousel {
     position: relative;
     width: 100%;
-    max-width: 800px;
-    height: 400px;
+    max-width: 900px;
+    height: 450px;
     margin: 0 auto;
     overflow: hidden;
-    border-radius: 8px;
-    border: 2px solid #8b6f47;
+    border-radius: 15px;
+    border: 2px solid var(--glass-border);
+    box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
 }
 
 .carousel-inner {
     display: flex;
-    transition: transform 0.5s ease-in-out;
+    transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
     height: 100%;
 }
 
@@ -167,16 +199,16 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    background: linear-gradient(135deg, rgba(44, 24, 16, 0.9), rgba(61, 40, 23, 0.9));
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(182, 36, 255, 0.1));
     font-size: 2rem;
-    color: #d4a574;
-    font-family: 'Cinzel', serif;
+    color: var(--text-primary);
+    font-family: 'Orbitron', sans-serif;
+    position: relative;
 }
 
-/* q chidoteee items del carousel clickeables -bynd */
 .carousel-clickable {
     cursor: pointer;
-    transition: transform 0.3s ease, filter 0.3s ease;
+    transition: all 0.3s ease;
     position: relative;
 }
 
@@ -186,11 +218,13 @@ h1 {
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    background: rgba(0, 0, 0, 0.7);
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    font-size: 1rem;
-    font-family: 'Cinzel', serif;
+    background: rgba(0, 240, 255, 0.2);
+    backdrop-filter: blur(10px);
+    padding: 0.8rem 1.5rem;
+    border-radius: 10px;
+    font-size: 0.9rem;
+    font-family: 'Inter', sans-serif;
+    border: 1px solid var(--neon-cyan);
     opacity: 0;
     transition: opacity 0.3s ease;
 }
@@ -200,141 +234,164 @@ h1 {
 }
 
 .carousel-clickable:hover {
-    filter: brightness(1.1);
+    filter: brightness(1.2);
 }
 
-/* chintrolas los botones del carrusel -bynd */
+/* aaa botones cyber del carousel -bynd */
 .carousel-btn {
     position: absolute;
     top: 50%;
     transform: translateY(-50%);
-    background: rgba(212, 165, 116, 0.3);
-    border: 2px solid #d4a574;
-    color: #f4e4c1;
-    font-size: 2rem;
-    padding: 1rem;
+    background: rgba(0, 240, 255, 0.2);
+    backdrop-filter: blur(10px);
+    border: 1px solid var(--neon-cyan);
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    padding: 1rem 1.2rem;
     cursor: pointer;
     z-index: 10;
     transition: all 0.3s ease;
+    border-radius: 10px;
 }
 
 .carousel-btn:hover {
-    background: rgba(212, 165, 116, 0.6);
+    background: rgba(0, 240, 255, 0.4);
+    box-shadow: 0 0 20px var(--neon-cyan);
+    transform: translateY(-50%) scale(1.1);
 }
 
 .carousel-btn.prev {
-    left: 10px;
+    left: 15px;
 }
 
 .carousel-btn.next {
-    right: 10px;
+    right: 15px;
 }
 
-/* vavavava los indicadores del carrusel -bynd */
+/* vavavava indicadores cyber -bynd */
 .carousel-indicators {
     position: absolute;
     bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
-    gap: 10px;
+    gap: 12px;
     z-index: 10;
 }
 
 .indicator {
-    width: 12px;
-    height: 12px;
+    width: 10px;
+    height: 10px;
     border-radius: 50%;
-    background: rgba(212, 165, 116, 0.5);
-    border: 1px solid #d4a574;
+    background: rgba(255, 255, 255, 0.3);
+    border: 1px solid var(--glass-border);
     cursor: pointer;
     transition: all 0.3s ease;
 }
 
 .indicator.active {
-    background: #d4a574;
-    transform: scale(1.3);
+    background: var(--neon-cyan);
+    box-shadow: 0 0 15px var(--neon-cyan);
+    transform: scale(1.4);
 }
 
-/* ey seccion de productos profesional -bynd */
-.random-section {
-    margin: 4rem 0;
-    padding: 2rem;
-    background: linear-gradient(135deg, rgba(61, 40, 23, 0.8), rgba(44, 24, 16, 0.8));
-    border: 3px solid #8b6f47;
-    border-radius: 10px;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+.indicator:hover {
+    background: var(--neon-magenta);
+    box-shadow: 0 0 10px var(--neon-magenta);
 }
 
-.random-section h2 {
-    font-family: 'Cinzel', serif;
-    font-size: 2.5rem;
-    color: #d4a574;
+/* fokeis seccion de productos -bynd */
+.products-section {
+    padding: 3rem;
+}
+
+.section-header {
     text-align: center;
+    margin-bottom: 3rem;
+}
+
+.section-header h2 {
+    font-size: 2.5rem;
     margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.7);
 }
 
 .section-subtitle {
-    text-align: center;
-    font-size: 1.2rem;
-    color: #c9a66b;
-    font-style: italic;
-    margin-bottom: 2rem;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    font-weight: 300;
 }
 
-.random-products {
+.products-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem;
 }
 
+/* chintrolas product cards con glassmorfismo -bynd */
 .product-card {
-    background: linear-gradient(135deg, rgba(61, 40, 23, 0.9), rgba(44, 24, 16, 0.9));
-    border: 2px solid #8b6f47;
-    border-radius: 8px;
-    padding: 2rem;
+    background: rgba(255, 255, 255, 0.05);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 15px;
+    border: 1px solid var(--glass-border);
+    padding: 1.5rem;
     transition: all 0.3s ease;
+    cursor: pointer;
     position: relative;
     overflow: hidden;
 }
 
-/* chintrolas la animacion del hover -bynd */
 .product-card::before {
     content: '';
     position: absolute;
     top: -50%;
-    right: -50%;
+    left: -50%;
     width: 200%;
     height: 200%;
-    background: radial-gradient(circle, rgba(212, 165, 116, 0.1) 0%, transparent 70%);
-    transform: scale(0);
-    transition: transform 0.6s ease;
+    background: radial-gradient(circle, rgba(0, 240, 255, 0.1) 0%, transparent 70%);
+    opacity: 0;
+    transition: opacity 0.5s ease;
 }
 
 .product-card:hover::before {
-    transform: scale(1);
+    opacity: 1;
 }
 
 .product-card:hover {
     transform: translateY(-10px);
-    box-shadow: 0 12px 40px rgba(212, 165, 116, 0.3);
-    border-color: #d4a574;
+    border-color: var(--neon-cyan);
+    box-shadow: 0 15px 40px rgba(0, 240, 255, 0.3),
+                0 0 30px rgba(0, 240, 255, 0.2);
 }
 
-/* vavavava estilos para el placeholder de imagen -bynd */
+/* aaa imagen con efecto cyber -bynd */
 .product-image {
     width: 100%;
-    height: 200px;
-    background: linear-gradient(135deg, rgba(44, 24, 16, 0.8), rgba(61, 40, 23, 0.8));
-    border: 2px solid #8b6f47;
-    border-radius: 8px;
+    height: 220px;
+    background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(182, 36, 255, 0.1));
+    border-radius: 10px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 1.5rem;
-    position: relative;
     overflow: hidden;
+    border: 1px solid var(--glass-border);
+    position: relative;
+}
+
+.product-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+
+.product-card:hover .product-image::after {
+    left: 100%;
 }
 
 .product-image img {
@@ -343,42 +400,47 @@ h1 {
     object-fit: cover;
 }
 
-.product-image::before {
-    content: '';
-    position: absolute;
-    font-size: 4rem;
-    opacity: 0.3;
-}
-
 .product-image span {
-    font-family: 'Cinzel', serif;
-    color: #d4a574;
-    font-size: 1.1rem;
+    font-family: 'Inter', sans-serif;
+    color: var(--text-secondary);
+    font-size: 1rem;
     z-index: 1;
     text-align: center;
     padding: 1rem;
 }
 
 .product-card h3 {
-    font-family: 'Cinzel', serif;
-    font-size: 1.8rem;
-    color: #d4a574;
+    font-family: 'Orbitron', sans-serif;
+    font-size: 1.5rem;
+    color: var(--text-primary);
     margin-bottom: 1rem;
+    font-weight: 600;
 }
 
 .product-card p {
-    color: #f4e4c1;
+    color: var(--text-secondary);
     line-height: 1.6;
     margin-bottom: 1rem;
+    font-weight: 300;
 }
 
 .price {
-    font-size: 1.5rem;
-    color: #d4a574;
-    font-weight: bold;
-    font-family: 'Cinzel', serif;
+    font-size: 1.8rem;
+    background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    font-family: 'Orbitron', sans-serif;
 }
 
+/* vavavava animaciones de particulas -bynd */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+/* chintrolas responsive -bynd */
 @media (max-width: 768px) {
     h1 {
         font-size: 2.5rem;
@@ -394,5 +456,20 @@ h1 {
     
     .product-image {
         height: 180px;
+    }
+
+    .glass-card {
+        padding: 1.5rem;
+    }
+
+    .products-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* aaa efectos de scroll suave -bynd */
+@media (prefers-reduced-motion: no-preference) {
+    * {
+        scroll-behavior: smooth;
     }
 }
