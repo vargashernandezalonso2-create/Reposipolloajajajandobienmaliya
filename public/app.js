@@ -203,7 +203,7 @@ async function getRandomProducts(count) {
 }
 
 async function renderRandomProducts() {
-    console.log('[DEBUG] Renderizando productos aleatorios...');
+    console.log('[DEBUG] Renderizando TODOS los productos...');
     const container = document.getElementById('randomProducts');
     
     if (!container) {
@@ -213,16 +213,17 @@ async function renderRandomProducts() {
     
     container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #00f0ff;">Cargando productos...</div>';
     
-    const randomProducts = await getRandomProducts(6);
+    // aaa ahora cargamos TODOS los productos no especiales -bynd
+    const allAvailableProducts = await getRandomProducts(100); // chintrolas pedimos 100 para obtener todos
     
-    if (randomProducts.length === 0) {
+    if (allAvailableProducts.length === 0) {
         container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #00f0ff;">No hay productos disponibles</div>';
         return;
     }
     
-    console.log('[DEBUG] Productos seleccionados:', randomProducts.map(p => p.name));
+    console.log('[DEBUG] Total de productos a mostrar:', allAvailableProducts.length);
     
-    container.innerHTML = randomProducts.map(product => `
+    container.innerHTML = allAvailableProducts.map(product => `
         <div class="product-card" data-id="${product.id}" onclick="goToProduct(${product.id})">
             <div class="product-image">
                 <img src="${product.image}" alt="${product.name}" onerror="this.parentElement.innerHTML='<span>Imagen del producto</span>'">
@@ -236,7 +237,7 @@ async function renderRandomProducts() {
         </div>
     `).join('');
     
-    console.log('[DEBUG] Productos renderizados exitosamente');
+    console.log('[DEBUG] Todos los productos renderizados exitosamente');
 }
 
 function goToProduct(productId) {
