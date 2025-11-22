@@ -8,6 +8,28 @@ let currentSlide = 0;
 let totalSlides = 0;
 let seasonalProducts = [];
 
+// vavavava funcion para crear particulas cyber -bynd
+function createCyberParticles() {
+    const particlesContainer = document.getElementById('particles');
+    const particleCount = 30;
+    
+    for (let i = 0; i < particleCount; i++) {
+        const particle = document.createElement('div');
+        particle.className = 'particle';
+        particle.style.left = Math.random() * 100 + '%';
+        particle.style.animationDelay = Math.random() * 10 + 's';
+        particle.style.animationDuration = (Math.random() * 10 + 10) + 's';
+        
+        // chintrolas colores aleatorios cyber -bynd
+        const colors = ['#00f0ff', '#ff00ff', '#00ff88', '#b624ff'];
+        const randomColor = colors[Math.floor(Math.random() * colors.length)];
+        particle.style.background = randomColor;
+        particle.style.boxShadow = `0 0 10px ${randomColor}`;
+        
+        particlesContainer.appendChild(particle);
+    }
+}
+
 function getCurrentSeason() {
     const today = new Date();
     const month = today.getMonth() + 1; 
@@ -146,7 +168,7 @@ async function loadProducts() {
         const container = document.getElementById('randomProducts');
         if (container) {
             container.innerHTML = `
-                <div style="grid-column: 1/-1; text-align: center; color: #d4a574; padding: 2rem;">
+                <div style="grid-column: 1/-1; text-align: center; color: #00f0ff; padding: 2rem;">
                     <h3>Error cargando productos</h3>
                     <p>No se pudo conectar con el servidor. Asegúrate de que esté corriendo.</p>
                 </div>
@@ -189,27 +211,27 @@ async function renderRandomProducts() {
         return;
     }
     
-    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #d4a574;">Cargando productos...</div>';
+    container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #00f0ff;">Cargando productos...</div>';
     
     const randomProducts = await getRandomProducts(6);
     
     if (randomProducts.length === 0) {
-        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #d4a574;">No hay productos disponibles</div>';
+        container.innerHTML = '<div style="grid-column: 1/-1; text-align: center; color: #00f0ff;">No hay productos disponibles</div>';
         return;
     }
     
     console.log('[DEBUG] Productos seleccionados:', randomProducts.map(p => p.name));
     
     container.innerHTML = randomProducts.map(product => `
-        <div class="product-card" data-id="${product.id}" onclick="goToProduct(${product.id})" style="cursor: pointer;">
+        <div class="product-card" data-id="${product.id}" onclick="goToProduct(${product.id})">
             <div class="product-image">
                 <img src="${product.image}" alt="${product.name}" onerror="this.parentElement.innerHTML='<span>Imagen del producto</span>'">
             </div>
             <h3>${product.name}</h3>
             <p>${product.desc}</p>
-            <div style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1rem;">
                 <p class="price">${product.price}</p>
-                <p style="color: #c9a66b; font-size: 0.9rem;">Stock: ${product.stock}</p>
+                <p style="color: rgba(255,255,255,0.6); font-size: 0.9rem;">Stock: ${product.stock}</p>
             </div>
         </div>
     `).join('');
@@ -259,11 +281,14 @@ console.log('🚀 [DEBUG] Esperando carga del DOM...');
 document.addEventListener('DOMContentLoaded', () => {
     console.log('✅ [DEBUG] DOM cargado!');
     
+    // q chidoteee creamos particulas cyber -bynd
+    createCyberParticles();
+    
     setupCarouselClicks();
     loadSeasonalProducts(); 
     loadProducts();
     startAutoplay(); 
-    console.log('✅ [DEBUG] Inicialización completa!');
+    console.log('✅ [DEBUG] Inicialización completa con efectos cyber!');
 });
 
-console.log('[DEBUG] Script cargado completamente');
+console.log('[DEBUG] Script cyber cargado completamente');
