@@ -4,35 +4,186 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Producto - La Desesperanza</title>
-    <link rel="stylesheet" href="style.css">
     <!-- vavavava leaflet para el mapita de groenlandia -bynd -->
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
-        /* aaa estilos para la pagina de producto -bynd */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Orbitron:wght@400;700;900&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cyber-bg: #0a0e27;
+            --cyber-bg-secondary: #1a1d3f;
+            --neon-cyan: #00f0ff;
+            --neon-magenta: #ff00ff;
+            --neon-green: #00ff88;
+            --neon-purple: #b624ff;
+            --glass-white: rgba(255, 255, 255, 0.1);
+            --glass-border: rgba(255, 255, 255, 0.18);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.7);
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cyber-bg);
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+
+        /* aaa fondo cyber con grid -bynd */
+        .cyber-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .grid-lines {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 240, 255, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 240, 255, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            animation: gridMove 20s linear infinite;
+        }
+
+        @keyframes gridMove {
+            0% { transform: translateY(0); }
+            100% { transform: translateY(50px); }
+        }
+
+        /* vavavava header glass -bynd */
+        .glass-header {
+            position: relative;
+            z-index: 10;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid var(--glass-border);
+            padding: 1.5rem 2rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 240, 255, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--neon-cyan);
+            color: var(--text-primary);
+            text-decoration: none;
+            border-radius: 10px;
+            font-family: 'Inter', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 20px var(--neon-cyan);
+            transform: translateX(-5px);
+        }
+
+        /* q chidoteee icono del carrito flotante -bynd */
+        .cart-icon {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            background: rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--neon-cyan);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 1001;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 240, 255, 0.3);
+        }
+
+        .cart-icon:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(0, 240, 255, 0.5);
+        }
+
+        .cart-icon span {
+            font-size: 1.8rem;
+        }
+
+        .cart-count {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: var(--neon-magenta);
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border: 2px solid var(--cyber-bg);
+            box-shadow: 0 0 10px var(--neon-magenta);
+        }
+
+        /* chintrolas container principal -bynd */
+        .container {
+            position: relative;
+            z-index: 10;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+        }
+
+        /* ey pagina de producto -bynd */
         .product-detail-container {
-            max-width: 1200px;
-            margin: 3rem auto;
-            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            padding: 3rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 4rem;
-            background: linear-gradient(135deg, rgba(61, 40, 23, 0.8), rgba(44, 24, 16, 0.8));
-            border: 3px solid #8b6f47;
-            border-radius: 10px;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
         }
 
         .product-detail-image {
             width: 100%;
             aspect-ratio: 1;
-            background: linear-gradient(135deg, rgba(44, 24, 16, 0.8), rgba(61, 40, 23, 0.8));
-            border: 2px solid #8b6f47;
-            border-radius: 8px;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.1), rgba(182, 36, 255, 0.1));
+            border: 2px solid var(--glass-border);
+            border-radius: 15px;
             overflow: hidden;
             display: flex;
             align-items: center;
             justify-content: center;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0, 240, 255, 0.2);
         }
 
         .product-detail-image img {
@@ -44,131 +195,49 @@
         .product-detail-info {
             display: flex;
             flex-direction: column;
-            justify-content: center;
             gap: 1.5rem;
         }
 
         .product-detail-title {
-            font-family: 'Cinzel', serif;
+            font-family: 'Orbitron', sans-serif;
             font-size: 2.5rem;
-            color: #d4a574;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             margin: 0;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
+            letter-spacing: 0.05em;
+            filter: drop-shadow(0 0 10px var(--neon-cyan));
         }
 
         .product-detail-description {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             line-height: 1.8;
-            color: #f4e4c1;
+            color: var(--text-secondary);
+            font-weight: 300;
         }
 
         .product-detail-price {
-            font-family: 'Cinzel', serif;
-            font-size: 2rem;
-            color: #d4a574;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-weight: bold;
         }
 
         .product-detail-stock {
             font-size: 1.1rem;
-            color: #c9a66b;
+            color: var(--text-secondary);
+            padding: 0.5rem 1rem;
+            background: rgba(0, 255, 136, 0.1);
+            border: 1px solid var(--neon-green);
+            border-radius: 10px;
+            width: fit-content;
         }
 
-        .back-button {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: rgba(212, 165, 116, 0.3);
-            border: 2px solid #d4a574;
-            color: #f4e4c1;
-            text-decoration: none;
-            border-radius: 5px;
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .back-button:hover {
-            background: rgba(212, 165, 116, 0.6);
-            transform: translateY(-2px);
-        }
-
-        .loading {
-            text-align: center;
-            padding: 4rem;
-            font-size: 1.5rem;
-            color: #d4a574;
-        }
-
-        /* vavavava estilos del carrito flotante -bynd */
-        .cart-icon {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, rgba(212, 165, 116, 0.9), rgba(139, 111, 71, 0.9));
-            border: 2px solid #d4a574;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
-        }
-
-        .cart-icon:hover {
-            transform: scale(1.1);
-            box-shadow: 0 6px 16px rgba(212, 165, 116, 0.6);
-        }
-
-        .cart-icon span {
-            font-size: 2rem;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: #d4a574;
-            color: #2c1810;
-            border-radius: 50%;
-            width: 24px;
-            height: 24px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-            border: 2px solid #2c1810;
-        }
-
-        /* chintrolas boton agregar al carrito -bynd */
-        .add-to-cart-btn {
-            display: inline-block;
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, rgba(212, 165, 116, 0.5), rgba(139, 111, 71, 0.5));
-            border: 2px solid #d4a574;
-            color: #f4e4c1;
-            text-decoration: none;
-            border-radius: 5px;
-            font-family: 'Cinzel', serif;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            text-align: center;
-        }
-
-        .add-to-cart-btn:hover {
-            background: linear-gradient(135deg, rgba(212, 165, 116, 0.8), rgba(139, 111, 71, 0.8));
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(212, 165, 116, 0.4);
-        }
-
+        /* aaa selector de cantidad cyber -bynd */
         .quantity-selector {
             display: flex;
             align-items: center;
@@ -176,30 +245,71 @@
         }
 
         .quantity-btn {
-            width: 40px;
-            height: 40px;
-            background: rgba(212, 165, 116, 0.3);
-            border: 2px solid #d4a574;
-            color: #f4e4c1;
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 240, 255, 0.2);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--neon-cyan);
+            color: var(--text-primary);
             font-size: 1.5rem;
             cursor: pointer;
-            border-radius: 5px;
+            border-radius: 10px;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .quantity-btn:hover {
-            background: rgba(212, 165, 116, 0.6);
+            background: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 15px var(--neon-cyan);
+            transform: scale(1.1);
         }
 
         .quantity-display {
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            color: #d4a574;
-            min-width: 40px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            color: var(--text-primary);
+            min-width: 50px;
             text-align: center;
         }
 
-        /* ey modal del carrito -bynd */
+        /* vavavava boton agregar al carrito -bynd */
+        .add-to-cart-btn {
+            padding: 1.2rem 2rem;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), rgba(182, 36, 255, 0.3));
+            backdrop-filter: blur(10px);
+            border: 2px solid var(--neon-cyan);
+            color: var(--text-primary);
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 15px;
+            transition: all 0.3s ease;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .add-to-cart-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.5), rgba(182, 36, 255, 0.5));
+            box-shadow: 0 0 30px var(--neon-cyan), 0 8px 20px rgba(0, 240, 255, 0.3);
+            transform: translateY(-3px);
+        }
+
+        .note {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            font-style: italic;
+            margin-top: 1rem;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 4rem;
+            font-size: 1.5rem;
+            color: var(--neon-cyan);
+        }
+
+        /* fokeis modal del carrito cyber -bynd */
         .cart-modal {
             display: none;
             position: fixed;
@@ -207,10 +317,11 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.8);
+            background: rgba(0, 0, 0, 0.9);
             z-index: 2000;
             align-items: center;
             justify-content: center;
+            backdrop-filter: blur(5px);
         }
 
         .cart-modal.active {
@@ -218,40 +329,51 @@
         }
 
         .cart-modal-content {
-            background: linear-gradient(135deg, rgba(61, 40, 23, 0.98), rgba(44, 24, 16, 0.98));
-            border: 3px solid #d4a574;
-            border-radius: 10px;
-            max-width: 600px;
+            background: rgba(26, 29, 63, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 2px solid var(--glass-border);
+            border-radius: 20px;
+            max-width: 700px;
             width: 90%;
-            max-height: 80vh;
+            max-height: 85vh;
             overflow-y: auto;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8);
+            box-shadow: 0 8px 32px rgba(0, 240, 255, 0.3);
         }
 
         .cart-modal-header {
             padding: 2rem;
-            border-bottom: 2px solid #8b6f47;
+            border-bottom: 2px solid var(--glass-border);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
         .cart-modal-header h2 {
-            font-family: 'Cinzel', serif;
-            color: #d4a574;
+            font-family: 'Orbitron', sans-serif;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-magenta));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
             margin: 0;
         }
 
         .close-modal {
             background: none;
             border: none;
-            color: #d4a574;
+            color: var(--text-primary);
             font-size: 2rem;
             cursor: pointer;
-            transition: transform 0.3s ease;
+            transition: all 0.3s ease;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
         }
 
         .close-modal:hover {
+            background: rgba(255, 0, 255, 0.2);
             transform: rotate(90deg);
         }
 
@@ -262,7 +384,7 @@
         .cart-empty {
             text-align: center;
             padding: 3rem 1rem;
-            color: #c9a66b;
+            color: var(--text-secondary);
             font-size: 1.2rem;
         }
 
@@ -271,16 +393,19 @@
             grid-template-columns: 80px 1fr auto;
             gap: 1rem;
             padding: 1rem;
-            border-bottom: 1px solid #8b6f47;
+            border-bottom: 1px solid var(--glass-border);
             align-items: center;
+            background: rgba(255, 255, 255, 0.02);
+            border-radius: 10px;
+            margin-bottom: 1rem;
         }
 
         .cart-item-image {
             width: 80px;
             height: 80px;
-            border-radius: 8px;
+            border-radius: 10px;
             overflow: hidden;
-            border: 2px solid #8b6f47;
+            border: 1px solid var(--glass-border);
         }
 
         .cart-item-image img {
@@ -296,13 +421,13 @@
         }
 
         .cart-item-name {
-            font-family: 'Cinzel', serif;
-            color: #d4a574;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-primary);
             font-size: 1.1rem;
         }
 
         .cart-item-price {
-            color: #c9a66b;
+            color: var(--text-secondary);
         }
 
         .cart-item-actions {
@@ -321,100 +446,59 @@
         .cart-item-quantity button {
             width: 30px;
             height: 30px;
-            background: rgba(212, 165, 116, 0.3);
-            border: 1px solid #d4a574;
-            color: #f4e4c1;
+            background: rgba(0, 240, 255, 0.2);
+            border: 1px solid var(--neon-cyan);
+            color: var(--text-primary);
             cursor: pointer;
-            border-radius: 3px;
+            border-radius: 5px;
             font-size: 1rem;
+            transition: all 0.3s ease;
         }
 
         .cart-item-quantity button:hover {
-            background: rgba(212, 165, 116, 0.6);
+            background: rgba(0, 240, 255, 0.4);
+            box-shadow: 0 0 10px var(--neon-cyan);
         }
 
         .cart-item-quantity span {
-            color: #d4a574;
+            color: var(--text-primary);
             min-width: 30px;
             text-align: center;
+            font-weight: 600;
         }
 
         .remove-item {
             background: none;
             border: none;
-            color: #d4a574;
+            color: var(--neon-magenta);
             cursor: pointer;
             font-size: 1.2rem;
-            transition: color 0.3s ease;
+            transition: all 0.3s ease;
+            padding: 0.3rem;
         }
 
         .remove-item:hover {
             color: #ff6b6b;
+            transform: scale(1.2);
         }
 
         .cart-modal-footer {
             padding: 2rem;
-            border-top: 2px solid #8b6f47;
+            border-top: 2px solid var(--glass-border);
         }
 
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            font-family: 'Cinzel', serif;
-            font-size: 1.5rem;
-            color: #d4a574;
-            margin-bottom: 1.5rem;
-        }
-
-        .cart-actions {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .clear-cart-btn {
-            padding: 1rem;
-            background: rgba(139, 111, 71, 0.3);
-            border: 2px solid #8b6f47;
-            color: #c9a66b;
-            font-family: 'Cinzel', serif;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            flex: 1;
-        }
-
-        .clear-cart-btn:hover {
-            background: rgba(139, 111, 71, 0.5);
-        }
-
-        .checkout-btn {
-            padding: 1rem;
-            background: linear-gradient(135deg, rgba(212, 165, 116, 0.5), rgba(139, 111, 71, 0.5));
-            border: 2px solid #d4a574;
-            color: #f4e4c1;
-            font-family: 'Cinzel', serif;
-            cursor: pointer;
-            border-radius: 5px;
-            transition: all 0.3s ease;
-            flex: 1;
-        }
-
-        .checkout-btn:hover {
-            background: linear-gradient(135deg, rgba(212, 165, 116, 0.8), rgba(139, 111, 71, 0.8));
-        }
-
-        /* aaa estilos para opciones de envio -bynd */
+        /* chintrolas opciones de envio cyber -bynd */
         .shipping-options {
             margin-bottom: 1.5rem;
             padding: 1.5rem;
-            background: rgba(44, 24, 16, 0.5);
-            border: 2px solid #8b6f47;
-            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 15px;
         }
 
         .shipping-options h3 {
-            font-family: 'Cinzel', serif;
-            color: #d4a574;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-primary);
             font-size: 1.2rem;
             margin-bottom: 1rem;
             text-align: center;
@@ -426,26 +510,28 @@
             gap: 1rem;
             padding: 1rem;
             margin-bottom: 0.8rem;
-            background: rgba(61, 40, 23, 0.6);
-            border: 2px solid #8b6f47;
-            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
             cursor: pointer;
             transition: all 0.3s ease;
         }
 
         .shipping-option:hover {
-            background: rgba(61, 40, 23, 0.8);
-            border-color: #d4a574;
+            background: rgba(0, 240, 255, 0.1);
+            border-color: var(--neon-cyan);
         }
 
         .shipping-option.selected {
-            background: rgba(212, 165, 116, 0.2);
-            border-color: #d4a574;
+            background: rgba(0, 240, 255, 0.15);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 240, 255, 0.2);
         }
 
         .shipping-option input[type="radio"] {
             margin-top: 0.3rem;
             cursor: pointer;
+            accent-color: var(--neon-cyan);
         }
 
         .shipping-details {
@@ -453,21 +539,21 @@
         }
 
         .shipping-name {
-            font-family: 'Cinzel', serif;
-            color: #d4a574;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--text-primary);
             font-size: 1.1rem;
             margin-bottom: 0.3rem;
         }
 
         .shipping-description {
-            color: #c9a66b;
+            color: var(--text-secondary);
             font-size: 0.9rem;
             line-height: 1.4;
         }
 
         .shipping-price {
-            font-family: 'Cinzel', serif;
-            color: #d4a574;
+            font-family: 'Orbitron', sans-serif;
+            color: var(--neon-cyan);
             font-size: 1.2rem;
             font-weight: bold;
             white-space: nowrap;
@@ -475,8 +561,8 @@
 
         .greenland-map-container {
             margin-top: 0.8rem;
-            border: 2px solid #8b6f47;
-            border-radius: 5px;
+            border: 1px solid var(--glass-border);
+            border-radius: 10px;
             overflow: hidden;
             display: none;
         }
@@ -492,15 +578,15 @@
 
         .greenland-coordinates {
             padding: 0.8rem;
-            background: rgba(44, 24, 16, 0.8);
-            border-top: 2px solid #8b6f47;
-            color: #c9a66b;
+            background: rgba(0, 240, 255, 0.1);
+            border-top: 1px solid var(--glass-border);
+            color: var(--text-secondary);
             font-size: 0.85rem;
             text-align: center;
         }
 
         .greenland-coordinates a {
-            color: #d4a574;
+            color: var(--neon-cyan);
             text-decoration: none;
             font-weight: bold;
         }
@@ -509,56 +595,84 @@
             text-decoration: underline;
         }
 
-        .subtotal-row {
+        /* aaa totales del carrito -bynd */
+        .subtotal-row,
+        .shipping-cost-row {
             display: flex;
             justify-content: space-between;
-            padding: 0.5rem 0;
-            color: #c9a66b;
+            padding: 0.8rem 0;
+            color: var(--text-secondary);
             font-size: 1.1rem;
         }
 
         .shipping-cost-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 0.5rem 0;
-            color: #c9a66b;
-            font-size: 1.1rem;
-            border-top: 1px solid #8b6f47;
+            border-top: 1px solid var(--glass-border);
             margin-top: 0.5rem;
             padding-top: 1rem;
         }
 
-        /* vavavava imagen gang flotante -bynd */
-        .gang-floating {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            z-index: 999;
-            pointer-events: none;
+        .cart-total {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 1.8rem;
+            background: linear-gradient(135deg, var(--neon-cyan), var(--neon-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin: 1rem 0;
+            padding-top: 1rem;
+            border-top: 2px solid var(--glass-border);
         }
 
-        .gang-floating img {
-            max-width: 200px;
-            height: auto;
-            animation: floatAndBreathe 4s ease-in-out infinite;
-            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.6));
+        .cart-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
         }
 
-        /* q chidoteee animacion de flotar respirar e inclinar -bynd */
-        @keyframes floatAndBreathe {
-            0%, 100% {
-                transform: translateY(0) scale(1) rotate(-15deg);
-            }
-            50% {
-                transform: translateY(-20px) scale(1.15) rotate(-15deg);
-            }
+        .clear-cart-btn {
+            padding: 1rem;
+            background: rgba(255, 0, 255, 0.2);
+            border: 1px solid var(--neon-magenta);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-weight: 600;
         }
 
-        /* chintrolas responsive -bynd */
+        .clear-cart-btn:hover {
+            background: rgba(255, 0, 255, 0.4);
+            box-shadow: 0 0 20px var(--neon-magenta);
+        }
+
+        .checkout-btn {
+            padding: 1rem;
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.3), rgba(0, 255, 136, 0.3));
+            border: 2px solid var(--neon-cyan);
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            flex: 1;
+            font-weight: 600;
+        }
+
+        .checkout-btn:hover {
+            background: linear-gradient(135deg, rgba(0, 240, 255, 0.5), rgba(0, 255, 136, 0.5));
+            box-shadow: 0 0 30px var(--neon-cyan);
+            transform: translateY(-2px);
+        }
+
+        /* vavavava responsive -bynd */
         @media (max-width: 768px) {
             .product-detail-container {
                 grid-template-columns: 1fr;
                 gap: 2rem;
+                padding: 2rem;
             }
 
             .product-detail-title {
@@ -566,35 +680,25 @@
             }
 
             .product-detail-price {
-                font-size: 1.5rem;
+                font-size: 2rem;
             }
 
-            .gang-floating img {
-                max-width: 150px;
+            .cart-item {
+                grid-template-columns: 1fr;
             }
-        }
 
-        .note {
-            font-size: 0.9rem;
-            color: #c9a66b;
-            font-style: italic;
-            margin-top: 2rem;
+            .cart-item-actions {
+                align-items: center;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="gear-bg">
-        <div class="gear gear1"></div>
-        <div class="gear gear2"></div>
-        <div class="gear gear3"></div>
+    <div class="cyber-bg">
+        <div class="grid-lines"></div>
     </div>
 
-    <!-- chintrolas imagen gang flotante -bynd -->
-    <div class="gang-floating">
-        <img src="/resources/gang.png" alt="Gang">
-    </div>
-
-    <!-- aaa icono del carrito flotante -bynd -->
+    <!-- chintrolas icono del carrito flotante -bynd -->
     <div class="cart-icon" onclick="toggleCart()">
         <span>🛒</span>
         <div class="cart-count" id="cartCount">0</div>
@@ -663,11 +767,8 @@
         </div>
     </div>
 
-    <header>
-        <div class="logo">
-            <h1>LA DESESPERANZA</h1>
-            <p class="subtitle">Panadería Artesanal desde 1889</p>
-        </div>
+    <header class="glass-header">
+        <a href="index.html" class="back-button">← Volver al catálogo</a>
     </header>
 
     <div class="container">
@@ -978,7 +1079,7 @@
             document.getElementById('productContent').innerHTML = `
                 <div class="product-detail-container">
                     <div style="grid-column: 1/-1; text-align: center;">
-                        <h2 style="color: #d4a574;">Producto no encontrado</h2>
+                        <h2 style="color: var(--neon-cyan);">Producto no encontrado</h2>
                         <a href="index.html" class="back-button">Volver al inicio</a>
                     </div>
                 </div>
@@ -1000,22 +1101,21 @@
                 <div class="product-detail-container">
                     <div class="product-detail-image">
                         <img src="${product.image}" alt="${product.name}" 
-                             onerror="this.parentElement.innerHTML='<span style=color:#d4a574;font-size:1.2rem;>Imagen no disponible</span>'">
+                             onerror="this.parentElement.innerHTML='<span style=color:var(--text-secondary);font-size:1.2rem;>Imagen no disponible</span>'">
                     </div>
                     <div class="product-detail-info">
                         <h1 class="product-detail-title">${product.name}</h1>
                         <p class="product-detail-description">${product.desc}</p>
                         <p class="product-detail-price">${product.price}</p>
-                        <p class="product-detail-stock">Stock disponible: ${product.stock} unidades</p>
+                        <p class="product-detail-stock">📊 Stock disponible: ${product.stock} unidades</p>
                         
                         <div class="quantity-selector">
-                            <button class="quantity-btn" onclick="decreaseQuantity()">-</button>
+                            <button class="quantity-btn" onclick="decreaseQuantity()">−</button>
                             <span class="quantity-display" id="quantityDisplay">1</span>
                             <button class="quantity-btn" onclick="increaseQuantity()">+</button>
                         </div>
                         
                         <button class="add-to-cart-btn" onclick="addToCart()">🛒 Agregar al carrito</button>
-                        <a href="index.html" class="back-button">← Volver al catálogo</a>
                         
                         <p class="note">*Su presentación final podra cambiar con respecto a las imágenes mostradas</p>
                     </div>
@@ -1027,8 +1127,8 @@
             document.getElementById('productContent').innerHTML = `
                 <div class="product-detail-container">
                     <div style="grid-column: 1/-1; text-align: center;">
-                        <h2 style="color: #d4a574;">Error cargando el producto</h2>
-                        <p style="color: #f4e4c1; margin: 1rem 0;">No se pudo cargar la información del producto.</p>
+                        <h2 style="color: var(--neon-cyan);">Error cargando el producto</h2>
+                        <p style="color: var(--text-secondary); margin: 1rem 0;">No se pudo cargar la información del producto.</p>
                         <a href="index.html" class="back-button">Volver al inicio</a>
                     </div>
                 </div>
