@@ -15,10 +15,47 @@
 
     <header class="glass-header">
         <div class="logo">
-            <h1>LA DESESPERANZA</h1>
-            <p class="subtitle">Panadería Artesanal · Est. 1889</p>
+            <h1>PANADERIA NAVIDEÑA</h1>
+            <p class="subtitle">Pan de Temporada · Est. 1889</p>
         </div>
+        <nav class="nav-links" id="navLinks">
+            <a href="auth.html" id="loginLink">Iniciar Sesion</a>
+            <a href="perfil.html" id="profileLink" style="display:none;">Mi Perfil</a>
+            <a href="admin.html" id="adminLink" style="display:none;">Admin</a>
+            <span id="userFundsNav" style="display:none; color: #00ff88;">$0.00</span>
+            <button id="logoutBtn" style="display:none;" onclick="logout()">Salir</button>
+        </nav>
     </header>
+
+    <style>
+        .nav-links {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+        .nav-links a, .nav-links button {
+            color: #00f0ff;
+            text-decoration: none;
+            font-weight: 500;
+            background: none;
+            border: 1px solid #00f0ff;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .nav-links a:hover, .nav-links button:hover {
+            background: #00f0ff;
+            color: #0a0e27;
+        }
+        .glass-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+    </style>
 
     <div class="container">
         <section class="hero glass-card">
@@ -48,5 +85,45 @@
     </div>
 
     <script src="app.js"></script>
+    <script>
+        const API_URL = window.location.hostname === 'localhost' ? 'http://localhost:3001' : '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/verificar`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('loginLink').style.display = 'none';
+                    document.getElementById('profileLink').style.display = 'inline';
+                    document.getElementById('logoutBtn').style.display = 'inline';
+                    document.getElementById('userFundsNav').style.display = 'inline';
+                    document.getElementById('userFundsNav').textContent =
+                        `$${data.user.fondos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+
+                    if (data.user.rol === 'admin') {
+                        document.getElementById('adminLink').style.display = 'inline';
+                    }
+                }
+            } catch (err) {
+                localStorage.removeItem('token');
+            }
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.reload();
+        }
+    </script>
 </body>
 </html>

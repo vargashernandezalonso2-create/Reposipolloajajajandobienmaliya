@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesion - Panaderia Navideña</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .auth-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+        }
+
+        .auth-header {
+            background: linear-gradient(135deg, #c41e3a 0%, #8b0000 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .auth-header h1 {
+            font-size: 1.8rem;
+            margin-bottom: 5px;
+        }
+
+        .auth-header p {
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+        .auth-tabs {
+            display: flex;
+            background: #f5f5f5;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab-btn.active {
+            background: white;
+            color: #c41e3a;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .auth-form {
+            padding: 30px;
+            display: none;
+        }
+
+        .auth-form.active {
+            display: block;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #c41e3a;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #c41e3a 0%, #8b0000 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(196, 30, 58, 0.4);
+        }
+
+        .submit-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 0.9rem;
+            display: none;
+        }
+
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .back-link a {
+            color: #c41e3a;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+        .password-requirements {
+            font-size: 0.8rem;
+            color: #666;
+            margin-top: 5px;
+        }
+
+        .christmas-decoration {
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <div class="auth-header">
+            <div class="christmas-decoration">🎄🍞🎅</div>
+            <h1>Panaderia Navideña</h1>
+            <p>Pan de Temporada</p>
+        </div>
+
+        <div class="auth-tabs">
+            <button class="tab-btn active" onclick="showTab('login')">Iniciar Sesion</button>
+            <button class="tab-btn" onclick="showTab('registro')">Registrarse</button>
+        </div>
+
+        <!-- Login Form -->
+        <form id="loginForm" class="auth-form active" onsubmit="handleLogin(event)">
+            <div id="loginError" class="error-message"></div>
+            <div id="loginSuccess" class="success-message"></div>
+
+            <div class="form-group">
+                <label for="loginUsername">Nombre de Usuario</label>
+                <input type="text" id="loginUsername" required minlength="3" maxlength="50"
+                       pattern="[a-zA-Z0-9_]+" title="Solo letras, numeros y guion bajo">
+            </div>
+
+            <div class="form-group">
+                <label for="loginPassword">Contraseña</label>
+                <input type="password" id="loginPassword" required minlength="6" maxlength="100">
+            </div>
+
+            <button type="submit" class="submit-btn" id="loginBtn">Iniciar Sesion</button>
+
+            <div class="back-link">
+                <a href="index.html">Volver a la tienda</a>
+            </div>
+        </form>
+
+        <!-- Register Form -->
+        <form id="registroForm" class="auth-form" onsubmit="handleRegistro(event)">
+            <div id="registroError" class="error-message"></div>
+            <div id="registroSuccess" class="success-message"></div>
+
+            <div class="form-group">
+                <label for="regUsername">Nombre de Usuario</label>
+                <input type="text" id="regUsername" required minlength="3" maxlength="50"
+                       pattern="[a-zA-Z0-9_]+" title="Solo letras, numeros y guion bajo">
+            </div>
+
+            <div class="form-group">
+                <label for="regEmail">Correo Electronico</label>
+                <input type="email" id="regEmail" required>
+            </div>
+
+            <div class="form-group">
+                <label for="regPassword">Contraseña</label>
+                <input type="password" id="regPassword" required minlength="6" maxlength="100">
+                <p class="password-requirements">Minimo 6 caracteres</p>
+            </div>
+
+            <div class="form-group">
+                <label for="regConfirmPassword">Confirmar Contraseña</label>
+                <input type="password" id="regConfirmPassword" required minlength="6" maxlength="100">
+            </div>
+
+            <button type="submit" class="submit-btn" id="registroBtn">Registrarse</button>
+
+            <div class="back-link">
+                <a href="index.html">Volver a la tienda</a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001'
+            : '';
+
+        // Check if already logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            if (token) {
+                verifyToken(token);
+            }
+        });
+
+        async function verifyToken(token) {
+            try {
+                const response = await fetch(`${API_URL}/api/auth/verificar`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (response.ok) {
+                    window.location.href = 'perfil.html';
+                }
+            } catch (err) {
+                localStorage.removeItem('token');
+            }
+        }
+
+        function showTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.auth-form').forEach(form => form.classList.remove('active'));
+
+            if (tab === 'login') {
+                document.querySelector('.tab-btn:first-child').classList.add('active');
+                document.getElementById('loginForm').classList.add('active');
+            } else {
+                document.querySelector('.tab-btn:last-child').classList.add('active');
+                document.getElementById('registroForm').classList.add('active');
+            }
+
+            // Clear messages
+            document.querySelectorAll('.error-message, .success-message').forEach(el => {
+                el.style.display = 'none';
+            });
+        }
+
+        function showError(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+
+        function showSuccess(elementId, message) {
+            const el = document.getElementById(elementId);
+            el.textContent = message;
+            el.style.display = 'block';
+        }
+
+        function validateUsername(username) {
+            if (!username || username.length < 3 || username.length > 50) {
+                return 'El username debe tener entre 3 y 50 caracteres';
+            }
+            if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                return 'El username solo puede contener letras, numeros y guion bajo';
+            }
+            return null;
+        }
+
+        function validateEmail(email) {
+            const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!re.test(email)) {
+                return 'Email invalido';
+            }
+            return null;
+        }
+
+        function validatePassword(password) {
+            if (!password || password.length < 6 || password.length > 100) {
+                return 'La contraseña debe tener entre 6 y 100 caracteres';
+            }
+            return null;
+        }
+
+        async function handleLogin(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('loginUsername').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const btn = document.getElementById('loginBtn');
+            const errorEl = document.getElementById('loginError');
+
+            errorEl.style.display = 'none';
+
+            // Validations
+            let error = validateUsername(username);
+            if (error) {
+                showError('loginError', error);
+                return;
+            }
+
+            error = validatePassword(password);
+            if (error) {
+                showError('loginError', error);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Iniciando...';
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al iniciar sesion');
+                }
+
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                showSuccess('loginSuccess', 'Inicio de sesion exitoso! Redirigiendo...');
+
+                setTimeout(() => {
+                    if (data.user.rol === 'admin') {
+                        window.location.href = 'admin.html';
+                    } else {
+                        window.location.href = 'perfil.html';
+                    }
+                }, 1000);
+
+            } catch (err) {
+                showError('loginError', err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Iniciar Sesion';
+            }
+        }
+
+        async function handleRegistro(event) {
+            event.preventDefault();
+
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            const btn = document.getElementById('registroBtn');
+            const errorEl = document.getElementById('registroError');
+
+            errorEl.style.display = 'none';
+
+            // Validations
+            let error = validateUsername(username);
+            if (error) {
+                showError('registroError', error);
+                return;
+            }
+
+            error = validateEmail(email);
+            if (error) {
+                showError('registroError', error);
+                return;
+            }
+
+            error = validatePassword(password);
+            if (error) {
+                showError('registroError', error);
+                return;
+            }
+
+            if (password !== confirmPassword) {
+                showError('registroError', 'Las contraseñas no coinciden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = 'Registrando...';
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/registro`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al registrarse');
+                }
+
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                showSuccess('registroSuccess', 'Registro exitoso! Redirigiendo...');
+
+                setTimeout(() => {
+                    window.location.href = 'perfil.html';
+                }, 1000);
+
+            } catch (err) {
+                showError('registroError', err.message);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Registrarse';
+            }
+        }
+    </script>
+</body>
+</html>
