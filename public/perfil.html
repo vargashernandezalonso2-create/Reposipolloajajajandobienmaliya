@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Perfil - Panaderia Navideña</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #c41e3a;
+            text-decoration: none;
+        }
+
+        .navbar-links {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+        }
+
+        .navbar-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .navbar-links a:hover {
+            color: #c41e3a;
+        }
+
+        .logout-btn {
+            background: #c41e3a;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px;
+        }
+
+        .profile-header {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-info h2 {
+            font-size: 1.8rem;
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .user-info p {
+            color: #666;
+        }
+
+        .user-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 5px;
+        }
+
+        .badge-cliente {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .badge-admin {
+            background: #fce4ec;
+            color: #c41e3a;
+        }
+
+        .funds-card {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            min-width: 250px;
+        }
+
+        .funds-card h3 {
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-bottom: 10px;
+        }
+
+        .funds-amount {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .section {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .section h3 {
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            color: #333;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
+        }
+
+        .add-funds-form {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .add-funds-form input {
+            flex: 1;
+            min-width: 200px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+
+        .add-funds-form input:focus {
+            outline: none;
+            border-color: #2e7d32;
+        }
+
+        .add-funds-btn {
+            background: #2e7d32;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .add-funds-btn:hover {
+            background: #1b5e20;
+        }
+
+        .history-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .history-table th,
+        .history-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .history-table th {
+            background: #f5f5f5;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .history-table tr:hover {
+            background: #fafafa;
+        }
+
+        .ticket-btn {
+            background: #c41e3a;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .ticket-btn:hover {
+            background: #a01830;
+        }
+
+        .cart-section {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 20px;
+        }
+
+        .cart-items {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .cart-item {
+            display: flex;
+            gap: 15px;
+            padding: 15px;
+            background: #f9f9f9;
+            border-radius: 10px;
+            align-items: center;
+        }
+
+        .cart-item img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+
+        .cart-item-info {
+            flex: 1;
+        }
+
+        .cart-item-info h4 {
+            margin-bottom: 5px;
+        }
+
+        .cart-item-info p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .cart-item-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            width: 30px;
+            height: 30px;
+            border: none;
+            background: #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .qty-btn:hover {
+            background: #d0d0d0;
+        }
+
+        .remove-btn {
+            color: #c41e3a;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+
+        .cart-summary {
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 10px;
+            height: fit-content;
+        }
+
+        .cart-summary h4 {
+            margin-bottom: 15px;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .summary-total {
+            font-size: 1.3rem;
+            font-weight: 700;
+            border-top: 2px solid #ddd;
+            padding-top: 10px;
+            margin-top: 10px;
+        }
+
+        .checkout-btn {
+            width: 100%;
+            padding: 12px;
+            background: #c41e3a;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-top: 15px;
+        }
+
+        .checkout-btn:hover {
+            background: #a01830;
+        }
+
+        .checkout-btn:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 500px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .ticket {
+            border: 2px dashed #ccc;
+            padding: 20px;
+            font-family: monospace;
+        }
+
+        .ticket-header {
+            text-align: center;
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 15px;
+            margin-bottom: 15px;
+        }
+
+        .ticket-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        .empty-message {
+            text-align: center;
+            padding: 40px;
+            color: #666;
+        }
+
+        .error-message {
+            background: #ffebee;
+            color: #c62828;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        .success-message {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+
+        @media (max-width: 768px) {
+            .cart-section {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .history-table {
+                font-size: 0.85rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="index.html" class="navbar-brand">🍞 Panaderia Navideña</a>
+        <div class="navbar-links">
+            <a href="index.html">Tienda</a>
+            <a href="perfil.html">Mi Perfil</a>
+            <span id="userDisplay"></span>
+            <button class="logout-btn" onclick="logout()">Cerrar Sesion</button>
+        </div>
+    </nav>
+
+    <div class="container">
+        <!-- Profile Header -->
+        <div class="profile-header">
+            <div class="user-info">
+                <h2 id="welcomeUser">Bienvenido</h2>
+                <p id="userEmail">correo@ejemplo.com</p>
+                <span id="userRole" class="user-badge badge-cliente">Cliente</span>
+            </div>
+            <div class="funds-card">
+                <h3>Mis Fondos Disponibles</h3>
+                <div class="funds-amount" id="fundsDisplay">$0.00</div>
+            </div>
+        </div>
+
+        <!-- Add Funds Section -->
+        <div class="section">
+            <h3>💰 Agregar Fondos</h3>
+            <div id="fundsMessage"></div>
+            <form class="add-funds-form" onsubmit="addFunds(event)">
+                <input type="number" id="fundsAmount" placeholder="Cantidad a agregar"
+                       min="1" max="999999999999" step="0.01" required>
+                <button type="submit" class="add-funds-btn">Agregar Fondos</button>
+            </form>
+            <p style="margin-top: 10px; font-size: 0.85rem; color: #666;">
+                Limite maximo: $999,999,999,999
+            </p>
+        </div>
+
+        <!-- Shopping Cart Section -->
+        <div class="section">
+            <h3>🛒 Mi Carrito</h3>
+            <div id="cartMessage"></div>
+            <div id="cartContent">
+                <div class="empty-message">Cargando carrito...</div>
+            </div>
+        </div>
+
+        <!-- Purchase History Section -->
+        <div class="section">
+            <h3>📋 Historial de Compras</h3>
+            <div id="historyContent">
+                <div class="empty-message">Cargando historial...</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Ticket Modal -->
+    <div class="modal" id="ticketModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Ticket de Compra</h3>
+                <button class="modal-close" onclick="closeModal()">&times;</button>
+            </div>
+            <div id="ticketContent" class="ticket"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = window.location.hostname === 'localhost'
+            ? 'http://localhost:3001'
+            : '';
+
+        let currentUser = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAuth();
+        });
+
+        async function checkAuth() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/auth/verificar`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+
+                if (!response.ok) {
+                    throw new Error('Token invalido');
+                }
+
+                const data = await response.json();
+                currentUser = data.user;
+                updateUserDisplay();
+                loadCart();
+                loadHistory();
+            } catch (err) {
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                window.location.href = 'auth.html';
+            }
+        }
+
+        function updateUserDisplay() {
+            document.getElementById('welcomeUser').textContent = `Bienvenido, ${currentUser.username}`;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userRole').textContent = currentUser.rol === 'admin' ? 'Administrador' : 'Cliente';
+            document.getElementById('userRole').className = `user-badge badge-${currentUser.rol}`;
+            document.getElementById('fundsDisplay').textContent = `$${currentUser.fondos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+            document.getElementById('userDisplay').textContent = currentUser.username;
+        }
+
+        function getToken() {
+            return localStorage.getItem('token');
+        }
+
+        async function addFunds(event) {
+            event.preventDefault();
+            const amount = parseFloat(document.getElementById('fundsAmount').value);
+            const messageEl = document.getElementById('fundsMessage');
+
+            if (isNaN(amount) || amount <= 0 || amount > 999999999999) {
+                messageEl.innerHTML = '<div class="error-message">Cantidad invalida</div>';
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/usuarios/fondos/agregar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify({ cantidad: amount })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al agregar fondos');
+                }
+
+                currentUser.fondos = data.fondos;
+                document.getElementById('fundsDisplay').textContent = `$${data.fondos.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+                document.getElementById('fundsAmount').value = '';
+                messageEl.innerHTML = '<div class="success-message">Fondos agregados exitosamente</div>';
+
+                setTimeout(() => {
+                    messageEl.innerHTML = '';
+                }, 3000);
+            } catch (err) {
+                messageEl.innerHTML = `<div class="error-message">${err.message}</div>`;
+            }
+        }
+
+        async function loadCart() {
+            try {
+                const response = await fetch(`${API_URL}/api/carrito`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                renderCart(data);
+            } catch (err) {
+                document.getElementById('cartContent').innerHTML =
+                    '<div class="empty-message">Error al cargar el carrito</div>';
+            }
+        }
+
+        function renderCart(cartData) {
+            const container = document.getElementById('cartContent');
+
+            if (cartData.items.length === 0) {
+                container.innerHTML = '<div class="empty-message">Tu carrito esta vacio. <a href="index.html">Ir a comprar</a></div>';
+                return;
+            }
+
+            let html = '<div class="cart-section"><div class="cart-items">';
+
+            cartData.items.forEach(item => {
+                html += `
+                    <div class="cart-item">
+                        <img src="${item.imagen_url}" alt="${item.nombre}" onerror="this.src='https://via.placeholder.com/80'">
+                        <div class="cart-item-info">
+                            <h4>${item.nombre}</h4>
+                            <p>$${item.precio.toFixed(2)} x ${item.cantidad} = $${item.subtotal.toFixed(2)}</p>
+                        </div>
+                        <div class="cart-item-actions">
+                            <button class="qty-btn" onclick="updateCartItem(${item.id_producto}, ${item.cantidad - 1})">-</button>
+                            <span>${item.cantidad}</span>
+                            <button class="qty-btn" onclick="updateCartItem(${item.id_producto}, ${item.cantidad + 1})">+</button>
+                            <button class="remove-btn" onclick="removeFromCart(${item.id_producto})">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+
+            html += '</div><div class="cart-summary">';
+            html += '<h4>Resumen</h4>';
+            html += `<div class="summary-row"><span>Subtotal:</span><span>$${cartData.total.toFixed(2)}</span></div>`;
+            html += `<div class="summary-row"><span>Envio:</span><span>$0.00</span></div>`;
+            html += `<div class="summary-row summary-total"><span>Total:</span><span>$${cartData.total.toFixed(2)}</span></div>`;
+
+            const canCheckout = currentUser.fondos >= cartData.total;
+            html += `<button class="checkout-btn" onclick="checkout()" ${canCheckout ? '' : 'disabled'}>
+                ${canCheckout ? 'Realizar Compra' : 'Fondos Insuficientes'}
+            </button>`;
+
+            if (!canCheckout) {
+                html += `<p style="text-align: center; margin-top: 10px; color: #c41e3a; font-size: 0.85rem;">
+                    Necesitas $${(cartData.total - currentUser.fondos).toFixed(2)} mas
+                </p>`;
+            }
+
+            html += '</div></div>';
+
+            container.innerHTML = html;
+        }
+
+        async function updateCartItem(productId, newQty) {
+            if (newQty <= 0) {
+                removeFromCart(productId);
+                return;
+            }
+
+            try {
+                const response = await fetch(`${API_URL}/api/carrito/${productId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify({ cantidad: newQty })
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error);
+                }
+
+                loadCart();
+            } catch (err) {
+                document.getElementById('cartMessage').innerHTML =
+                    `<div class="error-message">${err.message}</div>`;
+            }
+        }
+
+        async function removeFromCart(productId) {
+            try {
+                const response = await fetch(`${API_URL}/api/carrito/${productId}`, {
+                    method: 'DELETE',
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.error);
+                }
+
+                loadCart();
+            } catch (err) {
+                document.getElementById('cartMessage').innerHTML =
+                    `<div class="error-message">${err.message}</div>`;
+            }
+        }
+
+        async function checkout() {
+            if (!confirm('¿Confirmar compra?')) return;
+
+            try {
+                const response = await fetch(`${API_URL}/api/comprar`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${getToken()}`
+                    },
+                    body: JSON.stringify({ metodo_envio: 'pickup', costo_envio: 0 })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                currentUser.fondos = data.ticket.fondos_restantes;
+                document.getElementById('fundsDisplay').textContent =
+                    `$${data.ticket.fondos_restantes.toLocaleString('es-MX', {minimumFractionDigits: 2})}`;
+
+                showTicket(data.ticket);
+                loadCart();
+                loadHistory();
+
+            } catch (err) {
+                document.getElementById('cartMessage').innerHTML =
+                    `<div class="error-message">${err.message}</div>`;
+            }
+        }
+
+        async function loadHistory() {
+            try {
+                const response = await fetch(`${API_URL}/api/historial`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error);
+                }
+
+                renderHistory(data);
+            } catch (err) {
+                document.getElementById('historyContent').innerHTML =
+                    '<div class="empty-message">Error al cargar el historial</div>';
+            }
+        }
+
+        function renderHistory(history) {
+            const container = document.getElementById('historyContent');
+
+            if (history.length === 0) {
+                container.innerHTML = '<div class="empty-message">No tienes compras aun</div>';
+                return;
+            }
+
+            let html = '<table class="history-table"><thead><tr>';
+            html += '<th>No. Venta</th><th>Fecha</th><th>Productos</th><th>Total</th><th>Acciones</th>';
+            html += '</tr></thead><tbody>';
+
+            history.forEach(sale => {
+                const fecha = new Date(sale.fecha_compra).toLocaleDateString('es-MX');
+                const productos = sale.productos.map(p => `${p.nombre} (${p.cantidad})`).join(', ');
+
+                html += `<tr>
+                    <td>${sale.numero_venta}</td>
+                    <td>${fecha}</td>
+                    <td>${productos}</td>
+                    <td>$${sale.total.toFixed(2)}</td>
+                    <td><button class="ticket-btn" onclick="viewTicket('${sale.numero_venta}')">Ver Ticket</button></td>
+                </tr>`;
+            });
+
+            html += '</tbody></table>';
+            container.innerHTML = html;
+        }
+
+        async function viewTicket(numeroVenta) {
+            try {
+                const response = await fetch(`${API_URL}/api/historial/${numeroVenta}`, {
+                    headers: { 'Authorization': `Bearer ${getToken()}` }
+                });
+
+                const ticket = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(ticket.error);
+                }
+
+                showTicket(ticket);
+            } catch (err) {
+                alert('Error al cargar el ticket: ' + err.message);
+            }
+        }
+
+        function showTicket(ticket) {
+            const fecha = new Date(ticket.fecha_compra).toLocaleString('es-MX');
+
+            let html = '<div class="ticket-header">';
+            html += `<h3>${ticket.nombre_negocio}</h3>`;
+            html += `<p>Ticket: ${ticket.numero_venta}</p>`;
+            html += `<p>${fecha}</p>`;
+            html += '</div>';
+
+            html += '<div style="margin-bottom: 15px;">';
+            ticket.productos.forEach(p => {
+                html += `<div class="ticket-row">
+                    <span>${p.nombre} x${p.cantidad}</span>
+                    <span>$${p.subtotal.toFixed(2)}</span>
+                </div>`;
+            });
+            html += '</div>';
+
+            html += '<div style="border-top: 1px dashed #ccc; padding-top: 10px;">';
+            html += `<div class="ticket-row"><span>Subtotal:</span><span>$${ticket.subtotal.toFixed(2)}</span></div>`;
+            html += `<div class="ticket-row"><span>Envio:</span><span>$${ticket.costo_envio.toFixed(2)}</span></div>`;
+            html += `<div class="ticket-row" style="font-weight: bold;"><span>TOTAL:</span><span>$${ticket.total.toFixed(2)}</span></div>`;
+            html += '</div>';
+
+            document.getElementById('ticketContent').innerHTML = html;
+            document.getElementById('ticketModal').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('ticketModal').classList.remove('active');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = 'auth.html';
+        }
+
+        // Close modal on outside click
+        document.getElementById('ticketModal').addEventListener('click', (e) => {
+            if (e.target.id === 'ticketModal') {
+                closeModal();
+            }
+        });
+    </script>
+</body>
+</html>

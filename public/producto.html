@@ -890,27 +890,57 @@
     }
 
     // q chidoteee funcion para agregar al carrito -bynd
-    function addToCart() {
+    async function addToCart() {
         if (!currentProduct) return;
 
-        const cart = getCart();
-        const precio = parseFloat(currentProduct.price.replace('$', ''));
-        const existingIndex = cart.findIndex(item => item.id === currentProduct.id);
-        
-        if (existingIndex !== -1) {
-            cart[existingIndex].cantidad += quantity;
+        const token = localStorage.getItem('token');
+
+        // Si el usuario esta logueado, usar API persistente
+        if (token) {
+            try {
+                const response = await fetch(`${API_BASE}/api/carrito`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        id_producto: currentProduct.id,
+                        cantidad: quantity
+                    })
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error al agregar al carrito');
+                }
+
+                alert(`${currentProduct.name} agregado al carrito! (${quantity} unidad${quantity > 1 ? 'es' : ''})\n\nTu carrito esta guardado en tu perfil.`);
+            } catch (err) {
+                alert('Error: ' + err.message);
+            }
         } else {
-            cart.push({
-                id: currentProduct.id,
-                nombre: currentProduct.name,
-                precio: precio,
-                cantidad: quantity,
-                imagen: currentProduct.image
-            });
+            // Carrito local para usuarios no logueados
+            const cart = getCart();
+            const precio = parseFloat(currentProduct.price.replace('$', ''));
+            const existingIndex = cart.findIndex(item => item.id === currentProduct.id);
+
+            if (existingIndex !== -1) {
+                cart[existingIndex].cantidad += quantity;
+            } else {
+                cart.push({
+                    id: currentProduct.id,
+                    nombre: currentProduct.name,
+                    precio: precio,
+                    cantidad: quantity,
+                    imagen: currentProduct.image
+                });
+            }
+
+            saveCart(cart);
+            alert(`${currentProduct.name} agregado al carrito! (${quantity} unidad${quantity > 1 ? 'es' : ''})\n\nInicia sesion para guardar tu carrito.`);
         }
-        
-        saveCart(cart);
-        alert(`¡${currentProduct.name} agregado al carrito! (${quantity} unidad${quantity > 1 ? 'es' : ''})`);
     }
 
     // chintrolas funciones para la cantidad -bynd
